@@ -9,13 +9,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // To track which tiles are expanded
-  List<bool> expandedTiles = [];
-
   @override
   void initState() {
     super.initState();
-    expandedTiles = List<bool>.filled(data.length, false);
+
+    for (var day in data) {
+      day.expanded = false;
+    }
   }
 
   @override
@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               // Toggle the expanded state of the tile
               setState(() {
-                expandedTiles[index] = !expandedTiles[index];
+                data[index].expanded = !data[index].expanded;
               });
             },
             child: Card(
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
                       'Places: ${dayData.names()}',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                    if (expandedTiles[index]) ...[
+                    if (data[index].expanded) ...[
                       Divider(),
                       Text(
                         'Detailed Expenses:',
@@ -141,7 +141,6 @@ class _HomeState extends State<Home> {
             if (result != null && result is dayexpense) {
               setState(() {
                 data.add(result);
-                expandedTiles.add(false); // Keep expandedTiles in sync
               });
             }
           });

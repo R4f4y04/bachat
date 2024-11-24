@@ -11,10 +11,12 @@ class dayexpense {
   int dayno;
   double total = 0;
   late List<places> hotels;
+  late bool expanded;
 
   dayexpense(this.hotels, this.dayno) {
     calctotal();
     dayno++;
+    expanded = false;
   }
 
   void calctotal() {
