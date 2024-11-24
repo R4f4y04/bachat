@@ -8,14 +8,13 @@ final List<String> options = [
 ];
 
 class dayexpense {
-  int dayno;
   double total = 0;
   late List<places> hotels;
   late bool expanded;
 
-  dayexpense(this.hotels, this.dayno) {
+  dayexpense(this.hotels) {
     calctotal();
-    dayno++;
+
     expanded = false;
   }
 
@@ -50,10 +49,13 @@ class places {
 }
 
 List<dayexpense> data = [
-  dayexpense([places(name: "Raju", spent: 10000)], 1),
-  dayexpense([places(name: "ayaan", spent: 20000)], 2),
-  dayexpense([
-    places(name: "ayan", spent: 800),
-    places(name: "Hot n Spicy", spent: 900)
-  ], 3)
+  dayexpense(
+    [places(name: "Raju", spent: 10000)],
+  ),
+  dayexpense(
+    [places(name: "ayaan", spent: 20000)],
+  ),
+  dayexpense(
+    [places(name: "ayan", spent: 800), places(name: "Hot n Spicy", spent: 900)],
+  )
 ];

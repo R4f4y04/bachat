@@ -106,7 +106,7 @@ class _AddDayPageState extends State<AddDayPage> {
         onPressed: () {
           if (expenses.isNotEmpty) {
             // Create a new dayexpense object and pass it back
-            final newDay = dayexpense(expenses, data.length + 1);
+            final newDay = dayexpense(expenses);
             Navigator.pop(context, newDay); // Pass the new dayexpense back
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
