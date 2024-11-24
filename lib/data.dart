@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 final List<String> options = [
   'Raju',
   'Ayan',
@@ -11,11 +13,13 @@ class dayexpense {
   double total = 0;
   late List<places> hotels;
   late bool expanded;
+  late String date;
 
   dayexpense(this.hotels) {
     calctotal();
 
     expanded = false;
+    date = DateFormat('d MMMM').format(DateTime.now());
   }
 
   void calctotal() {
@@ -45,7 +49,11 @@ class dayexpense {
 class places {
   String name;
   double spent;
-  places({required this.name, required this.spent});
+  late String time;
+  places({required this.name, required this.spent}) {
+    var format = DateFormat('hh:mm a');
+    time = format.format(DateTime.now());
+  }
 }
 
 List<dayexpense> data = [

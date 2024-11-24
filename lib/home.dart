@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Places: ${dayData.names()}',
+                      data[index].date,
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     if (data[index].expanded) ...[
@@ -84,6 +84,11 @@ class _HomeState extends State<Home> {
                                 Text(
                                   place.name,
                                   style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  place.time,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey[600]),
                                 ),
                                 Text(
                                   'Rs ${place.spent.toStringAsFixed(2)}',
