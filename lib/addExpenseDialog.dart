@@ -12,12 +12,13 @@ class AddExpenseDialog extends StatefulWidget {
 
 class _AddExpenseDialogState extends State<AddExpenseDialog> {
   String? selectedPlace;
-
   final TextEditingController amountController = TextEditingController();
+  final TextEditingController customPlaceController = TextEditingController();
 
   @override
   void dispose() {
     amountController.dispose();
+    customPlaceController.dispose();
     super.dispose();
   }
 
@@ -48,18 +49,34 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
                 border: OutlineInputBorder(),
                 labelText: 'Select Place',
               ),
-              items: options.map((place) {
-                return DropdownMenuItem<String>(
-                  value: place,
-                  child: Text(place),
-                );
-              }).toList(),
+              items: [
+                ...options.map((place) {
+                  return DropdownMenuItem<String>(
+                    value: place,
+                    child: Text(place),
+                  );
+                }).toList(),
+                DropdownMenuItem<String>(
+                  value: 'Other',
+                  child: Text('Other'),
+                ),
+              ],
               onChanged: (value) {
                 setState(() {
                   selectedPlace = value;
                 });
               },
             ),
+            if (selectedPlace == 'Other') ...[
+              SizedBox(height: 16),
+              TextField(
+                controller: customPlaceController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Custom Place',
+                ),
+              ),
+            ],
             SizedBox(height: 20),
             TextField(
               controller: amountController,
@@ -72,23 +89,36 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                final place = selectedPlace;
-                final amount = amountController.text;
+                final place = selectedPlace == 'Other'
+                    ? customPlaceController.text
+                    : selectedPlace;
+                final amountText = amountController.text;
 
-                if (place != null && amount.isNotEmpty) {
-                  // Save the expense and close the dialog
-                  //Navigator.of(context).pop({'place': place, 'amount': amount});
-                  places temp =
-                      places(name: place, spent: double.parse(amount));
-                  data[widget.index].addplace(temp);
+                if (place != null &&
+                    place.isNotEmpty &&
+                    amountText.isNotEmpty) {
+                  final amount = double.tryParse(amountText);
+                  if (amount != null) {
+                    // Save the expense and close the dialog
+                    final temp = places(name: place, spent: amount);
+                    data[widget.index].addplace(temp);
 
-                  Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else {
+                    // Show an error if the amount is invalid
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Please enter a valid amount.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 } else {
-                  // Show an error if inputs are invalid
+                  // Show an error if inputs are incomplete
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content:
-                          Text('Please select a place and enter an amount.'),
+                      content: Text(
+                          'Please select a place (or enter a custom one) and provide an amount.'),
                       duration: Duration(seconds: 2),
                     ),
                   );

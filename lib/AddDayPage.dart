@@ -9,25 +9,29 @@ class AddDayPage extends StatefulWidget {
 class _AddDayPageState extends State<AddDayPage> {
   final List<places> expenses = [];
   final TextEditingController amountController = TextEditingController();
+  final TextEditingController customPlaceController = TextEditingController();
   String? selectedPlace;
 
   @override
   void dispose() {
     amountController.dispose();
+    customPlaceController.dispose();
     super.dispose();
   }
 
   void addExpense() {
-    final place = selectedPlace;
+    final place =
+        selectedPlace == 'Other' ? customPlaceController.text : selectedPlace;
     final amountText = amountController.text;
 
-    if (place != null && amountText.isNotEmpty) {
+    if (place != null && place.isNotEmpty && amountText.isNotEmpty) {
       final amount = double.tryParse(amountText);
       if (amount != null) {
         setState(() {
           expenses.add(places(name: place, spent: amount));
         });
         amountController.clear();
+        customPlaceController.clear();
         selectedPlace = null;
       }
     }
@@ -55,18 +59,34 @@ class _AddDayPageState extends State<AddDayPage> {
                 border: OutlineInputBorder(),
                 labelText: 'Select Place',
               ),
-              items: options.map((place) {
-                return DropdownMenuItem<String>(
-                  value: place,
-                  child: Text(place),
-                );
-              }).toList(),
+              items: [
+                ...options.map((place) {
+                  return DropdownMenuItem<String>(
+                    value: place,
+                    child: Text(place),
+                  );
+                }).toList(),
+                DropdownMenuItem<String>(
+                  value: 'Other',
+                  child: Text('Other'),
+                ),
+              ],
               onChanged: (value) {
                 setState(() {
                   selectedPlace = value;
                 });
               },
             ),
+            if (selectedPlace == 'Other') ...[
+              SizedBox(height: 16),
+              TextField(
+                controller: customPlaceController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Custom Place',
+                ),
+              ),
+            ],
             SizedBox(height: 16),
             TextField(
               controller: amountController,
@@ -94,7 +114,7 @@ class _AddDayPageState extends State<AddDayPage> {
                   return ListTile(
                     title: Text(expense.name),
                     subtitle:
-                        Text('Amount: \$${expense.spent.toStringAsFixed(2)}'),
+                        Text('Amount: Rs ${expense.spent.toStringAsFixed(2)}'),
                   );
                 },
               ),
