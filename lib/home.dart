@@ -22,6 +22,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: PopupMenuButton(
+          itemBuilder: (context) {
+            return [
+              PopupMenuItem(child: Text("save month")),
+              PopupMenuItem(child: Text("Expenditure History"))
+            ];
+          },
+          onSelected: (value) {},
+        ),
         title: Text('Expense Calculator'),
         centerTitle: true,
       ),
