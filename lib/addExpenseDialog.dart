@@ -14,11 +14,13 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
   String? selectedPlace;
   final TextEditingController amountController = TextEditingController();
   final TextEditingController customPlaceController = TextEditingController();
+  final TextEditingController itemscontroller = TextEditingController();
 
   @override
   void dispose() {
     amountController.dispose();
     customPlaceController.dispose();
+    itemscontroller.dispose();
     super.dispose();
   }
 
@@ -87,6 +89,14 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
+            TextField(
+              controller: itemscontroller,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Items',
+                  hintText: "Optional"),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 final place = selectedPlace == 'Other'
@@ -100,7 +110,8 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
                   final amount = double.tryParse(amountText);
                   if (amount != null) {
                     // Save the expense and close the dialog
-                    final temp = places(name: place, spent: amount);
+                    final temp = places(
+                        name: place, spent: amount, item: itemscontroller.text);
                     data[widget.index].addplace(temp);
 
                     Navigator.pop(context);

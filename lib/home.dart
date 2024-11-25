@@ -87,25 +87,44 @@ class _HomeState extends State<Home> {
                         children: dayData.hotels.map((place) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
                               children: [
-                                Text(
-                                  place.name,
-                                  style: TextStyle(fontSize: 14),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      place.name,
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      place.time,
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600]),
+                                    ),
+                                    Text(
+                                      'Rs ${place.spent.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  place.time,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey[600]),
-                                ),
-                                Text(
-                                  'Rs ${place.spent.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[700],
+                                if (place.item != null) ...[
+                                  Text(
+                                    place.item!,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[500],
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
-                                ),
+                                ],
+                                SizedBox(
+                                  height: 3,
+                                )
                               ],
                             ),
                           );

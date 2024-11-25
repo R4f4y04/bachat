@@ -10,12 +10,15 @@ class _AddDayPageState extends State<AddDayPage> {
   final List<places> expenses = [];
   final TextEditingController amountController = TextEditingController();
   final TextEditingController customPlaceController = TextEditingController();
+
+  final TextEditingController itemscontroller = TextEditingController();
   String? selectedPlace;
 
   @override
   void dispose() {
     amountController.dispose();
     customPlaceController.dispose();
+    itemscontroller.dispose();
     super.dispose();
   }
 
@@ -28,10 +31,12 @@ class _AddDayPageState extends State<AddDayPage> {
       final amount = double.tryParse(amountText);
       if (amount != null) {
         setState(() {
-          expenses.add(places(name: place, spent: amount));
+          expenses.add(
+              places(name: place, spent: amount, item: itemscontroller.text));
         });
         amountController.clear();
         customPlaceController.clear();
+        itemscontroller.clear();
         selectedPlace = null;
       }
     }
@@ -97,6 +102,14 @@ class _AddDayPageState extends State<AddDayPage> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 16),
+            TextField(
+              controller: itemscontroller,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Items',
+                  hintText: "optional"),
+            ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: addExpense,
               child: Text('Add Expense'),
@@ -113,8 +126,22 @@ class _AddDayPageState extends State<AddDayPage> {
                   final expense = expenses[index];
                   return ListTile(
                     title: Text(expense.name),
-                    subtitle:
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text('Amount: Rs ${expense.spent.toStringAsFixed(2)}'),
+                        if (expense.item != null) ...[
+                          Text(
+                            expense.item!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ]
+                      ],
+                    ),
                   );
                 },
               ),

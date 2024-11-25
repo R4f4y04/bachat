@@ -50,7 +50,8 @@ class places {
   String name;
   double spent;
   late String time;
-  places({required this.name, required this.spent}) {
+  String? item;
+  places({required this.name, required this.spent, this.item}) {
     var format = DateFormat('hh:mm a');
     time = format.format(DateTime.now());
   }
