@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:giki_expense/AddDayPage.dart';
 import 'package:giki_expense/addExpenseDialog.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'data.dart';
 
 class Home extends StatefulWidget {
@@ -9,6 +10,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  void deleteDay(index) {
+    data[index].total = 0;
+    data[index].hotels.clear();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Day ${index + 1} deleted.'),
+        duration: Durations.short4,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,121 +53,156 @@ class _HomeState extends State<Home> {
           final day = index + 1;
           final dayData = data[index];
 
-          return GestureDetector(
-            onTap: () {
-              // Toggle the expanded state of the tile
-              setState(() {
-                data[index].expanded = !data[index].expanded;
-              });
-            },
-            child: Card(
-              margin: EdgeInsets.only(bottom: 10),
-              elevation: 2,
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Day $day',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Total spent: Rs ${dayData.total.toStringAsFixed(2)}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      data[index].date,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                    if (data[index].expanded) ...[
-                      Divider(),
-                      Text(
-                        'Detailed Expenses:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Slidable(
+              key: ValueKey(day), // Unique key for the Slidable
+              endActionPane: ActionPane(
+                motion: const StretchMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (_) {
+                      // Handle edit action
+                    },
+                    icon: Icons.edit,
+                    foregroundColor: Colors.black,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  SlidableAction(
+                    onPressed: (_) {
+                      setState(() {
+                        deleteDay(index);
+                      });
+                    },
+                    icon: Icons.delete,
+                    foregroundColor: Colors.black,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ],
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  // Toggle the expanded state of the tile
+                  setState(() {
+                    data[index].expanded = !data[index].expanded;
+                  });
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Day $day',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Column(
-                        children: dayData.hotels.map((place) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                        SizedBox(height: 8),
+                        Text(
+                          'Total spent: Rs ${dayData.total.toStringAsFixed(2)}',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          dayData.date,
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        if (data[index].expanded) ...[
+                          Divider(),
+                          Text(
+                            'Detailed Expenses:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Column(
+                            children: dayData.hotels.map((place) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      place.name,
-                                      style: TextStyle(fontSize: 14),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          place.name,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        Text(
+                                          place.time,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600]),
+                                        ),
+                                        Text(
+                                          'Rs ${place.spent.toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      place.time,
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600]),
-                                    ),
-                                    Text(
-                                      'Rs ${place.spent.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[700],
+                                    if (place.item != null)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 4.0),
+                                        child: Text(
+                                          place.item!,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[500],
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
                                       ),
-                                    ),
                                   ],
                                 ),
-                                if (place.item != null) ...[
-                                  Text(
-                                    place.item!,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[500],
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
-                                SizedBox(
-                                  height: 3,
-                                )
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(height: 12),
-                    ],
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AddExpenseDialog(
-                                index: index,
                               );
+                            }).toList(),
+                          ),
+                          SizedBox(height: 12),
+                        ],
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AddExpenseDialog(
+                                    index: index,
+                                  );
+                                },
+                              ).then((_) {
+                                setState(
+                                    () {}); // Refresh UI after dialog closes
+                              });
                             },
-                          ).then((_) {
-                            setState(() {}); // Refresh UI after dialog closes
-                          });
-                        },
-                        icon: Icon(Icons.add),
-                        label: Text('Add Expense'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          minimumSize: Size(120, 36),
+                            icon: Icon(Icons.add),
+                            label: Text('Add Expense'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              minimumSize: Size(120, 36),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
