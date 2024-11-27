@@ -11,6 +11,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  double MonthlySpent = 0;
+
   void deleteDay(index) {
     data[index].total = 0;
     data[index].hotels.clear();
@@ -24,6 +26,12 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void calculateMonthly() {
+    for (var day in data) {
+      MonthlySpent += day.total;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +42,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    calculateMonthly();
     final themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
         actions: [
           // Toggle Theme IconButton
           IconButton(
@@ -57,7 +67,7 @@ class _HomeState extends State<Home> {
           },
           onSelected: (value) {},
         ),
-        title: Text('Expense Calculator'),
+        title: Text("Month's Spent Rs ${MonthlySpent}"),
         centerTitle: true,
       ),
       body: ListView.builder(
