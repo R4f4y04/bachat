@@ -10,8 +10,8 @@ class _AddDayPageState extends State<AddDayPage> {
   final List<places> expenses = [];
   final TextEditingController amountController = TextEditingController();
   final TextEditingController customPlaceController = TextEditingController();
-
   final TextEditingController itemscontroller = TextEditingController();
+
   String? selectedPlace;
 
   @override
@@ -111,6 +111,12 @@ class _AddDayPageState extends State<AddDayPage> {
             ),
             SizedBox(height: 16),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 6,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+                minimumSize: Size(120, 36),
+              ),
               onPressed: addExpense,
               child: Text('Add Expense'),
             ),
@@ -150,6 +156,8 @@ class _AddDayPageState extends State<AddDayPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         onPressed: () {
           if (expenses.isNotEmpty) {
             // Create a new dayexpense object and pass it back

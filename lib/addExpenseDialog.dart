@@ -98,6 +98,12 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 6,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+                minimumSize: Size(120, 36),
+              ),
               onPressed: () {
                 final place = selectedPlace == 'Other'
                     ? customPlaceController.text

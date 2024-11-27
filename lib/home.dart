@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:giki_expense/AddDayPage.dart';
 import 'package:giki_expense/addExpenseDialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 import 'data.dart';
 
 class Home extends StatefulWidget {
@@ -15,8 +16,10 @@ class _HomeState extends State<Home> {
     data[index].hotels.clear();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Day ${index + 1} deleted.'),
-        duration: Durations.short4,
+        content: Text(
+          'Day ${index + 1} Deleted.',
+        ),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -24,7 +27,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
     for (var day in data) {
       day.expanded = false;
     }
@@ -32,13 +34,25 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          // Toggle Theme IconButton
+          IconButton(
+            icon: Icon(
+                themeManager.isDarkTheme ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () {
+              themeManager.toggleTheme();
+            },
+          ),
+        ],
         leading: PopupMenuButton(
+          color: Theme.of(context).appBarTheme.backgroundColor,
           itemBuilder: (context) {
             return [
-              PopupMenuItem(child: Text("save month")),
-              PopupMenuItem(child: Text("Expenditure History"))
+              PopupMenuItem(child: Text("Save Month")),
+              PopupMenuItem(child: Text("Expenditure History")),
             ];
           },
           onSelected: (value) {},
@@ -65,7 +79,9 @@ class _HomeState extends State<Home> {
                       // Handle edit action
                     },
                     icon: Icons.edit,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.transparent,
+                    foregroundColor:
+                        Theme.of(context).appBarTheme.foregroundColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   SlidableAction(
@@ -75,7 +91,9 @@ class _HomeState extends State<Home> {
                       });
                     },
                     icon: Icons.delete,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.transparent,
+                    foregroundColor:
+                        Theme.of(context).appBarTheme.foregroundColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ],
@@ -195,7 +213,10 @@ class _HomeState extends State<Home> {
                             icon: Icon(Icons.add),
                             label: Text('Add Expense'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
+                              backgroundColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                              foregroundColor:
+                                  Theme.of(context).appBarTheme.foregroundColor,
                               minimumSize: Size(120, 36),
                             ),
                           ),
@@ -210,6 +231,8 @@ class _HomeState extends State<Home> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         onPressed: () {
           // Navigate to the AddDayPage
           Navigator.push(

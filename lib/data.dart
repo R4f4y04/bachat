@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 final List<String> options = [
   'Raju',
@@ -68,3 +69,118 @@ List<dayexpense> data = [
     [places(name: "ayan", spent: 800), places(name: "Hot n Spicy", spent: 900)],
   )
 ];
+
+class ThemeManager with ChangeNotifier {
+  bool _isDarkTheme = false;
+
+  bool get isDarkTheme => _isDarkTheme;
+
+  ThemeData get currentTheme => _isDarkTheme ? darkTheme : lightTheme;
+
+  void toggleTheme() {
+    _isDarkTheme = !_isDarkTheme;
+    notifyListeners();
+  }
+}
+
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primaryColor: Colors.white,
+  scaffoldBackgroundColor: Colors.white,
+  cardColor: Colors.grey[100],
+  iconTheme: IconThemeData(color: Colors.grey[800]),
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.grey[900],
+    elevation: 0,
+    centerTitle: true,
+    titleTextStyle: TextStyle(
+      color: Colors.grey[900],
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  textTheme: TextTheme(
+    bodyLarge: TextStyle(color: Colors.grey[900]),
+    bodyMedium: TextStyle(color: Colors.grey[800]),
+    titleLarge: TextStyle(
+      color: Colors.grey[900],
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey[300]!),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.blue),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    filled: true,
+    fillColor: Colors.grey[100],
+    labelStyle: TextStyle(color: Colors.grey[700]),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  ),
+  dividerColor: Colors.grey[300],
+);
+
+final darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: Colors.black,
+  scaffoldBackgroundColor: Color(0xFF121212),
+  cardColor: Color(0xFF1E1E1E),
+  iconTheme: IconThemeData(color: Colors.grey[400]),
+  appBarTheme: AppBarTheme(
+    backgroundColor: Color(0xFF121212),
+    foregroundColor: Colors.grey[200],
+    elevation: 0,
+    centerTitle: true,
+    titleTextStyle: TextStyle(
+      color: Colors.grey[200],
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  textTheme: TextTheme(
+    bodyLarge: TextStyle(color: Colors.grey[300]),
+    bodyMedium: TextStyle(color: Colors.grey[400]),
+    titleLarge: TextStyle(
+      color: Colors.grey[200],
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey[700]!),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.deepPurpleAccent),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    filled: true,
+    fillColor: Color(0xFF1E1E1E),
+    labelStyle: TextStyle(color: Colors.grey[500]),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.deepPurpleAccent,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  ),
+  dividerColor: Colors.grey[800],
+);
