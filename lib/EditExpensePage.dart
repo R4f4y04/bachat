@@ -107,9 +107,9 @@ class _EditDayPageState extends State<EditDayPage> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            foregroundColor:
                                 Theme.of(context).appBarTheme.foregroundColor,
+                            foregroundColor:
+                                Theme.of(context).appBarTheme.backgroundColor,
                           ),
                           onPressed: () {
                             final newPlace = customPlaceController.text;
@@ -125,8 +125,10 @@ class _EditDayPageState extends State<EditDayPage> {
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            foregroundColor:
+                                Theme.of(context).appBarTheme.foregroundColor,
                           ),
                           onPressed: () {
                             _deletePlace(placeIndex);
