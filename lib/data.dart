@@ -23,6 +23,13 @@ class dayexpense {
     date = DateFormat('d MMMM').format(DateTime.now());
   }
 
+  void recalcTotal() {
+    total = 0;
+    for (var hotel in hotels) {
+      total += hotel.spent;
+    }
+  }
+
   void calctotal() {
     double temp = 0;
     for (var i in hotels) {

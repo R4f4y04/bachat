@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:giki_expense/AddDayPage.dart';
+import 'package:giki_expense/EditExpensePage.dart';
 import 'package:giki_expense/addExpenseDialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class _HomeState extends State<Home> {
   }
 
   void calculateMonthly() {
+    MonthlySpent = 0;
     for (var day in data) {
       MonthlySpent += day.total;
     }
@@ -86,7 +88,12 @@ class _HomeState extends State<Home> {
                 children: [
                   SlidableAction(
                     onPressed: (_) {
-                      // Handle edit action
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return EditDayPage(index: index);
+                      })).then((value) {
+                        setState(() {});
+                      });
                     },
                     icon: Icons.edit,
                     backgroundColor: Colors.transparent,
