@@ -78,27 +78,42 @@ class _EditDayPageState extends State<EditDayPage> {
                     TextField(
                       controller: customPlaceController,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Place',
-                      ),
+                          fillColor:
+                              Theme.of(context).appBarTheme.backgroundColor,
+                          border: OutlineInputBorder(),
+                          labelText: 'Place',
+                          labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor)),
                     ),
                     SizedBox(height: 8),
                     TextField(
                       controller: amountController,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Amount Spent',
-                      ),
+                          fillColor:
+                              Theme.of(context).appBarTheme.backgroundColor,
+                          border: OutlineInputBorder(),
+                          labelText: 'Amount Spent',
+                          labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor)),
                       keyboardType: TextInputType.number,
                     ),
                     SizedBox(height: 8),
                     TextField(
                       controller: itemsController,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Items',
-                        hintText: "Optional",
-                      ),
+                          fillColor:
+                              Theme.of(context).appBarTheme.backgroundColor,
+                          border: OutlineInputBorder(),
+                          labelText: 'Items',
+                          hintText: "Optional",
+                          labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor)),
                     ),
                     SizedBox(height: 8),
                     Row(

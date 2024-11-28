@@ -48,6 +48,9 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             DropdownButtonFormField<String>(
               value: selectedPlace,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
                 border: OutlineInputBorder(),
                 labelText: 'Select Place',
               ),
@@ -74,6 +77,9 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
               TextField(
                 controller: customPlaceController,
                 decoration: InputDecoration(
+                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).appBarTheme.foregroundColor),
                   border: OutlineInputBorder(),
                   labelText: 'Enter Custom Place',
                 ),
@@ -83,6 +89,9 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             TextField(
               controller: amountController,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
                 border: OutlineInputBorder(),
                 labelText: 'Amount Spent',
               ),
@@ -92,6 +101,9 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             TextField(
               controller: itemscontroller,
               decoration: InputDecoration(
+                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).appBarTheme.foregroundColor),
                   border: OutlineInputBorder(),
                   labelText: 'Items',
                   hintText: "Optional"),

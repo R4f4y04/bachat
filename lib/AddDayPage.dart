@@ -61,6 +61,9 @@ class _AddDayPageState extends State<AddDayPage> {
             DropdownButtonFormField<String>(
               value: selectedPlace,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
                 border: OutlineInputBorder(),
                 labelText: 'Select Place',
               ),
@@ -96,6 +99,9 @@ class _AddDayPageState extends State<AddDayPage> {
             TextField(
               controller: amountController,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
                 border: OutlineInputBorder(),
                 labelText: 'Amount Spent',
               ),
@@ -105,6 +111,9 @@ class _AddDayPageState extends State<AddDayPage> {
             TextField(
               controller: itemscontroller,
               decoration: InputDecoration(
+                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).appBarTheme.foregroundColor),
                   border: OutlineInputBorder(),
                   labelText: 'Items',
                   hintText: "optional"),
