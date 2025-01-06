@@ -40,7 +40,7 @@ class DayRecord {
   final List<ExpenseRecord> expenses;
 
   @HiveField(2)
-  final double totalSpent;
+  double totalSpent;
 
   DayRecord({
     required this.date,

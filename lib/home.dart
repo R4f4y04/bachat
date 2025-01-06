@@ -29,12 +29,72 @@ class _HomeState extends State<Home> {
     _loadCurrentMonth();
   }
 
+  Future<void> _addNewDay() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddDayPage()),
+    );
+
+    if (result != null && result is dayexpense) {
+      setState(() {
+        final newDayRecord = DayRecord(
+          date: DateTime.now().toString(),
+          expenses: result.hotels
+              .map((p) => ExpenseRecord(
+                    name: p.name,
+                    amount: p.spent,
+                    time: DateTime.now().toString(),
+                    items: p.item,
+                  ))
+              .toList(),
+          totalSpent: result.total,
+        );
+
+        currentMonth!.days.add(newDayRecord);
+        currentMonth!.totalSpent += result.total;
+        expandedStates.add(false);
+
+        // Save to Hive
+        monthsBox.put(currentMonth!.key, currentMonth!);
+        _calculateMonthlySpent();
+      });
+    }
+  }
+
+  void _deleteDay(int index) {
+    setState(() {
+      // Subtract the day's total from monthly total
+      currentMonth!.totalSpent -= currentMonth!.days[index].totalSpent;
+
+      // Remove the day
+      currentMonth!.days.removeAt(index);
+      expandedStates.removeAt(index);
+
+      // Save to Hive
+      monthsBox.put(currentMonth!.key, currentMonth!);
+      _calculateMonthlySpent();
+    });
+  }
+
+  void _addExpenseToDay(int dayIndex, ExpenseRecord expense) {
+    setState(() {
+      currentMonth!.days[dayIndex].expenses.add(expense);
+      currentMonth!.days[dayIndex].totalSpent += expense.amount;
+      currentMonth!.totalSpent += expense.amount;
+
+      // Save to Hive
+      monthsBox.put(currentMonth!.key, currentMonth!);
+      _calculateMonthlySpent();
+    });
+  }
+
   void _loadCurrentMonth() {
     if (monthsBox.isNotEmpty) {
       setState(() {
         currentMonth = monthsBox.values.last;
         expandedStates =
             List.generate(currentMonth?.days.length ?? 0, (_) => false);
+        _calculateMonthlySpent(); // Add this line
       });
     } else {
       Future.microtask(() {
@@ -115,7 +175,7 @@ class _HomeState extends State<Home> {
           children: [
             Text(currentMonth!.monthName),
             Text(
-              "Spent: ₹${monthlySpent.toStringAsFixed(2)} / ₹${currentMonth!.intendedBudget}",
+              "Spent: Rs. ${monthlySpent.toStringAsFixed(2)} / Rs. ${currentMonth!.intendedBudget}",
               style: TextStyle(fontSize: 14),
             ),
           ],
@@ -125,8 +185,10 @@ class _HomeState extends State<Home> {
       body: ValueListenableBuilder(
         valueListenable: monthsBox.listenable(),
         builder: (context, Box<MonthRecord> box, _) {
-          if (currentMonth == null)
+          if (currentMonth == null) {
+            _loadCurrentMonth(); // Add this line
             return Center(child: CircularProgressIndicator());
+          }
 
           return ListView.builder(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -169,34 +231,6 @@ class _HomeState extends State<Home> {
         tooltip: 'Add New Day',
       ),
     );
-  }
-
-  Future<void> _addNewDay() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddDayPage()),
-    );
-
-    if (result != null && result is dayexpense) {
-      setState(() {
-        // Convert dayexpense to DayRecord and add to current month
-        final newDayRecord = DayRecord(
-          date: DateTime.now().toString(),
-          expenses: result.hotels
-              .map((p) => ExpenseRecord(
-                    name: p.name,
-                    amount: p.spent,
-                    time: DateTime.now().toString(),
-                    items: p.item,
-                  ))
-              .toList(),
-          totalSpent: result.total,
-        );
-        currentMonth!.days.add(newDayRecord);
-        currentMonth!.totalSpent += result.total;
-        monthsBox.put(currentMonth!.key, currentMonth!);
-      });
-    }
   }
 }
 
@@ -272,7 +306,7 @@ class DayCard extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Total spent: ₹${dayRecord.totalSpent.toStringAsFixed(2)}',
+                    'Total spent: Rs. ${dayRecord.totalSpent.toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
@@ -311,7 +345,7 @@ class DayCard extends StatelessWidget {
                                             color: Colors.grey[600]),
                                       ),
                                       Text(
-                                        '₹${expense.amount.toStringAsFixed(2)}',
+                                        'Rs. ${expense.amount.toStringAsFixed(2)}',
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey[700]),

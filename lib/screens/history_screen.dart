@@ -46,9 +46,9 @@ class HistoryScreen extends StatelessWidget {
                           SizedBox(height: 8),
                           Text('Total Days: $daysCount'),
                           SizedBox(height: 8),
-                          Text('Budget: ₹${month.intendedBudget}'),
+                          Text('Budget: Rs. ${month.intendedBudget}'),
                           SizedBox(height: 8),
-                          Text('Spent: ₹${month.totalSpent}'),
+                          Text('Spent: Rs. ${month.totalSpent}'),
                           SizedBox(height: 8),
                           LinearProgressIndicator(
                             value: month.totalSpent / month.intendedBudget,
