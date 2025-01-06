@@ -61,6 +61,16 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void _addExpenseToDay(int dayIndex, ExpenseRecord newExpense) {
+    setState(() {
+      currentMonth!.days[dayIndex].expenses.add(newExpense);
+      currentMonth!.days[dayIndex].totalSpent += newExpense.amount;
+      currentMonth!.totalSpent += newExpense.amount;
+      monthsBox.put(currentMonth!.key, currentMonth!);
+      _calculateMonthlySpent();
+    });
+  }
+
   void _deleteDay(int index) {
     setState(() {
       // Subtract the day's total from monthly total
@@ -69,18 +79,6 @@ class _HomeState extends State<Home> {
       // Remove the day
       currentMonth!.days.removeAt(index);
       expandedStates.removeAt(index);
-
-      // Save to Hive
-      monthsBox.put(currentMonth!.key, currentMonth!);
-      _calculateMonthlySpent();
-    });
-  }
-
-  void _addExpenseToDay(int dayIndex, ExpenseRecord expense) {
-    setState(() {
-      currentMonth!.days[dayIndex].expenses.add(expense);
-      currentMonth!.days[dayIndex].totalSpent += expense.amount;
-      currentMonth!.totalSpent += expense.amount;
 
       // Save to Hive
       monthsBox.put(currentMonth!.key, currentMonth!);
@@ -205,18 +203,16 @@ class _HomeState extends State<Home> {
                     expandedStates[index] = !expandedStates[index];
                   });
                 },
-                onDelete: (index) {
-                  setState(() {
-                    currentMonth!.days.removeAt(index);
-                    expandedStates.removeAt(index);
-                    monthsBox.put(currentMonth!.key, currentMonth!);
-                  });
-                },
-                onAddExpense: (index) {
-                  showDialog(
+                onDelete: _deleteDay,
+                onAddExpense: (index) async {
+                  final result = await showDialog<ExpenseRecord>(
                     context: context,
                     builder: (context) => AddExpenseDialog(index: index),
-                  ).then((_) => setState(() {}));
+                  );
+
+                  if (result != null) {
+                    _addExpenseToDay(index, result);
+                  }
                 },
               );
             },

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:giki_expense/models/month_record.dart';
+import 'package:hive/hive.dart';
 import 'data.dart';
 
 class EditDayPage extends StatefulWidget {
@@ -11,17 +13,20 @@ class EditDayPage extends StatefulWidget {
 }
 
 class _EditDayPageState extends State<EditDayPage> {
-  late List<places> placesList;
-
   final TextEditingController amountController = TextEditingController();
   final TextEditingController customPlaceController = TextEditingController();
   final TextEditingController itemscontroller = TextEditingController();
   String? selectedPlace;
 
+  late List<ExpenseRecord> expenses;
+  late final MonthRecord currentMonth;
+
   @override
   void initState() {
     super.initState();
-    placesList = data[widget.index].hotels; // Get places for the selected day
+    final monthsBox = Hive.box<MonthRecord>('months');
+    currentMonth = monthsBox.values.last;
+    expenses = List.from(currentMonth.days[widget.index].expenses);
   }
 
   @override
@@ -33,19 +38,42 @@ class _EditDayPageState extends State<EditDayPage> {
   }
 
   void _saveChanges(
-      int placeIndex, String newPlace, double newSpent, String? newItem) {
+      int expenseIndex, String newPlace, double newAmount, String? newItems) {
     setState(() {
-      placesList[placeIndex].name = newPlace;
-      placesList[placeIndex].spent = newSpent;
-      placesList[placeIndex].item = newItem;
-      data[widget.index].recalcTotal(); // Recalculate total
+      final updatedExpense = ExpenseRecord(
+        name: newPlace,
+        amount: newAmount,
+        time: DateTime.now().toString(),
+        items: newItems,
+      );
+
+      // Update the expense
+      double oldAmount = expenses[expenseIndex].amount;
+      expenses[expenseIndex] = updatedExpense;
+
+      // Update totals
+      currentMonth.days[widget.index].totalSpent += (newAmount - oldAmount);
+      currentMonth.totalSpent += (newAmount - oldAmount);
+
+      // Save to Hive
+      final monthsBox = Hive.box<MonthRecord>('months');
+      monthsBox.put(currentMonth.key, currentMonth);
     });
   }
 
-  void _deletePlace(int placeIndex) {
+  void _deleteExpense(int expenseIndex) {
     setState(() {
-      placesList.removeAt(placeIndex); // Remove place
-      data[widget.index].calctotal(); // Recalculate total
+      // Subtract amount from totals
+      final deletedAmount = expenses[expenseIndex].amount;
+      currentMonth.days[widget.index].totalSpent -= deletedAmount;
+      currentMonth.totalSpent -= deletedAmount;
+
+      // Remove expense
+      expenses.removeAt(expenseIndex);
+
+      // Save to Hive
+      final monthsBox = Hive.box<MonthRecord>('months');
+      monthsBox.put(currentMonth.key, currentMonth);
     });
   }
 
@@ -53,21 +81,22 @@ class _EditDayPageState extends State<EditDayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Expenses for ${data[widget.index].date}'),
+        title: Text('Edit Expenses for Day ${widget.index + 1}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
-          itemCount: placesList.length,
-          itemBuilder: (context, placeIndex) {
-            final place = placesList[placeIndex];
+          itemCount: expenses.length,
+          itemBuilder: (context, expenseIndex) {
+            final expense = expenses[expenseIndex];
             final TextEditingController customPlaceController =
-                TextEditingController(text: place.name);
+                TextEditingController(text: expense.name);
             final TextEditingController amountController =
-                TextEditingController(text: place.spent.toString());
+                TextEditingController(text: expense.amount.toString());
             final TextEditingController itemsController =
-                TextEditingController(text: place.item ?? '');
+                TextEditingController(text: expense.items ?? '');
 
+            // Rest of your existing UI code...
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: Padding(
@@ -132,7 +161,7 @@ class _EditDayPageState extends State<EditDayPage> {
                             final newAmount = double.tryParse(newAmountText);
 
                             if (newPlace.isNotEmpty && newAmount != null) {
-                              _saveChanges(placeIndex, newPlace, newAmount,
+                              _saveChanges(expenseIndex, newPlace, newAmount,
                                   itemsController.text);
                             }
                           },
@@ -146,7 +175,7 @@ class _EditDayPageState extends State<EditDayPage> {
                                 Theme.of(context).appBarTheme.foregroundColor,
                           ),
                           onPressed: () {
-                            _deletePlace(placeIndex);
+                            _deleteExpense(expenseIndex);
                           },
                           child: Text('Delete'),
                         ),
@@ -163,10 +192,11 @@ class _EditDayPageState extends State<EditDayPage> {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         onPressed: () {
-          if (placesList.isNotEmpty) {
+          if (expenses.isNotEmpty) {
             // Save and go back with updated data
-            final updatedDay = dayexpense(placesList);
-            Navigator.pop(context, updatedDay);
+            currentMonth.days[widget.index].expenses.clear();
+            currentMonth.days[widget.index].expenses.addAll(expenses);
+            Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Please add at least one expense.')),

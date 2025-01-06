@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:giki_expense/models/month_record.dart';
 import 'data.dart';
 
 class AddExpenseDialog extends StatefulWidget {
@@ -22,6 +23,30 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     customPlaceController.dispose();
     itemscontroller.dispose();
     super.dispose();
+  }
+
+  void _saveExpense() {
+    final place =
+        selectedPlace == 'Other' ? customPlaceController.text : selectedPlace;
+    final amountText = amountController.text;
+
+    if (place != null && place.isNotEmpty && amountText.isNotEmpty) {
+      final amount = double.tryParse(amountText);
+      if (amount != null) {
+        // Create new ExpenseRecord and return it
+        final newExpense = ExpenseRecord(
+          name: place,
+          amount: amount,
+          time: DateTime.now().toString(),
+          items: itemscontroller.text.isEmpty ? null : itemscontroller.text,
+        );
+        Navigator.pop(context, newExpense);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please enter a valid amount.')),
+        );
+      }
+    }
   }
 
   @override
@@ -116,43 +141,7 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
                 foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
                 minimumSize: Size(120, 36),
               ),
-              onPressed: () {
-                final place = selectedPlace == 'Other'
-                    ? customPlaceController.text
-                    : selectedPlace;
-                final amountText = amountController.text;
-
-                if (place != null &&
-                    place.isNotEmpty &&
-                    amountText.isNotEmpty) {
-                  final amount = double.tryParse(amountText);
-                  if (amount != null) {
-                    // Save the expense and close the dialog
-                    final temp = places(
-                        name: place, spent: amount, item: itemscontroller.text);
-                    data[widget.index].addplace(temp);
-
-                    Navigator.pop(context);
-                  } else {
-                    // Show an error if the amount is invalid
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Please enter a valid amount.'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                } else {
-                  // Show an error if inputs are incomplete
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          'Please select a place (or enter a custom one) and provide an amount.'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
+              onPressed: _saveExpense,
               child: Text('Add'),
             ),
           ],
