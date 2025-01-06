@@ -77,6 +77,13 @@ List<dayexpense> data = [
   )
 ];
 
+class MonthData {
+  late String monthName;
+  late List<dayexpense> monthlyData;
+}
+
+List<MonthData> monthsData = [];
+
 class ThemeManager with ChangeNotifier {
   bool _isDarkTheme = false;
 

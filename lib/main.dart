@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'data.dart';
 import 'home.dart';
+import 'models/month_record.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+
+  // Register adapters
+  Hive.registerAdapter(MonthRecordAdapter());
+  Hive.registerAdapter(DayRecordAdapter());
+  Hive.registerAdapter(ExpenseRecordAdapter());
+
+  // Open boxes
+  await Hive.openBox<MonthRecord>('months');
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeManager(),
