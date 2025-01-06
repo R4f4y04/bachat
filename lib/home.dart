@@ -192,8 +192,6 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             itemCount: currentMonth!.days.length,
             itemBuilder: (context, index) {
-              if (index >= expandedStates.length) return SizedBox.shrink();
-
               return DayCard(
                 dayRecord: currentMonth!.days[index],
                 index: index,
@@ -203,16 +201,30 @@ class _HomeState extends State<Home> {
                     expandedStates[index] = !expandedStates[index];
                   });
                 },
-                onDelete: _deleteDay,
+                onDelete: (index) {
+                  setState(() {
+                    currentMonth!.totalSpent -=
+                        currentMonth!.days[index].totalSpent;
+                    currentMonth!.days.removeAt(index);
+                    expandedStates.removeAt(index);
+                    monthsBox.put(currentMonth!.key, currentMonth!);
+                  });
+                },
                 onAddExpense: (index) async {
-                  final result = await showDialog<ExpenseRecord>(
+                  final result = await showDialog(
                     context: context,
-                    builder: (context) => AddExpenseDialog(index: index),
+                    builder: (context) => AddExpenseDialog(
+                      index: index,
+                    ),
                   );
-
                   if (result != null) {
                     _addExpenseToDay(index, result);
                   }
+                },
+                onDayUpdated: () {
+                  setState(() {
+                    _loadCurrentMonth();
+                  });
                 },
               );
             },
@@ -237,6 +249,7 @@ class DayCard extends StatelessWidget {
   final Function(int) onExpandToggle;
   final Function(int) onDelete;
   final Function(int) onAddExpense;
+  final VoidCallback onDayUpdated;
 
   const DayCard({
     Key? key,
@@ -246,6 +259,7 @@ class DayCard extends StatelessWidget {
     required this.onExpandToggle,
     required this.onDelete,
     required this.onAddExpense,
+    required this.onDayUpdated,
   }) : super(key: key);
 
   @override

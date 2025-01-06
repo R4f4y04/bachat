@@ -13,18 +13,19 @@ class EditDayPage extends StatefulWidget {
 }
 
 class _EditDayPageState extends State<EditDayPage> {
+  late Box<MonthRecord> monthsBox;
+  late MonthRecord currentMonth;
+  late List<ExpenseRecord> expenses;
+
   final TextEditingController amountController = TextEditingController();
   final TextEditingController customPlaceController = TextEditingController();
   final TextEditingController itemscontroller = TextEditingController();
   String? selectedPlace;
 
-  late List<ExpenseRecord> expenses;
-  late final MonthRecord currentMonth;
-
   @override
   void initState() {
     super.initState();
-    final monthsBox = Hive.box<MonthRecord>('months');
+    monthsBox = Hive.box<MonthRecord>('months');
     currentMonth = monthsBox.values.last;
     expenses = List.from(currentMonth.days[widget.index].expenses);
   }
@@ -52,28 +53,35 @@ class _EditDayPageState extends State<EditDayPage> {
       expenses[expenseIndex] = updatedExpense;
 
       // Update totals
+      // Update the current month's data immediately
+      currentMonth.days[widget.index].expenses[expenseIndex] = updatedExpense;
       currentMonth.days[widget.index].totalSpent += (newAmount - oldAmount);
       currentMonth.totalSpent += (newAmount - oldAmount);
 
-      // Save to Hive
-      final monthsBox = Hive.box<MonthRecord>('months');
-      monthsBox.put(currentMonth.key, currentMonth);
+      // Save to Hive immediately
+      monthsBox.put(currentMonth.key, currentMonth).then((_) {
+        // Notify parent of changes
+        Navigator.pop(context, true);
+      });
     });
   }
 
   void _deleteExpense(int expenseIndex) {
     setState(() {
-      // Subtract amount from totals
       final deletedAmount = expenses[expenseIndex].amount;
+
+      // Update both local and stored data immediately
+      expenses.removeAt(expenseIndex);
+      currentMonth.days[widget.index].expenses.removeAt(expenseIndex);
       currentMonth.days[widget.index].totalSpent -= deletedAmount;
       currentMonth.totalSpent -= deletedAmount;
 
-      // Remove expense
-      expenses.removeAt(expenseIndex);
-
-      // Save to Hive
-      final monthsBox = Hive.box<MonthRecord>('months');
-      monthsBox.put(currentMonth.key, currentMonth);
+      // Save to Hive immediately
+      monthsBox.put(currentMonth.key, currentMonth).then((_) {
+        if (expenses.isEmpty) {
+          Navigator.pop(context, true);
+        }
+      });
     });
   }
 
