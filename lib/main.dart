@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'data.dart';
 import 'home.dart';
 import 'models/month_record.dart';
+import 'screens/new_month_screen.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -30,7 +31,7 @@ class ExpenseApp extends StatelessWidget {
     final themeManager = Provider.of<ThemeManager>(context);
     return MaterialApp(
       theme: themeManager.currentTheme,
-      home: Home(),
+      home: Hive.box<MonthRecord>('months').isEmpty ? NewMonthScreen() : Home(),
     );
   }
 }

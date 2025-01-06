@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'models/month_record.dart';
 import 'data.dart';
 import 'screens/history_screen.dart';
+import 'screens/new_month_screen.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -27,10 +28,17 @@ class _HomeState extends State<Home> {
   }
 
   void _loadCurrentMonth() {
-    // Get the most recent month
     if (monthsBox.isNotEmpty) {
       currentMonth = monthsBox.values.last;
       _calculateMonthlySpent();
+    } else {
+      // No months exist, navigate to new month screen
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NewMonthScreen()),
+        );
+      });
     }
   }
 
