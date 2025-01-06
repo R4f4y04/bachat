@@ -188,15 +188,14 @@ class DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Slidable(
         endActionPane: ActionPane(
-          motion: const ScrollMotion(),
+          motion: const StretchMotion(),
           children: [
             SlidableAction(
               onPressed: (context) async {
-                // Navigate to edit page
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -207,60 +206,111 @@ class DayCard extends StatelessWidget {
                   onDayUpdated();
                 }
               },
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
               icon: Icons.edit,
-              label: 'Edit',
+              backgroundColor: Colors.transparent,
+              foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+              borderRadius: BorderRadius.circular(12),
             ),
           ],
         ),
-        child: ExpansionTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                dayRecord.date,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              Text(
-                '₹${dayRecord.totalSpent.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ],
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          children: dayRecord.expenses.map((expense) {
-            return ListTile(
-              title: Text(expense.name),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('₹${expense.amount.toStringAsFixed(2)}'),
-                  if (expense.items != null && expense.items!.isNotEmpty)
-                    Text(
-                      expense.items!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                ],
-              ),
-              trailing: Text(
-                expense.time,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+          elevation: 4,
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Day ${index + 1}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
+                SizedBox(height: 8),
+                Text(
+                  'Total spent: ₹${dayRecord.totalSpent.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 8),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: dayRecord.expenses.length,
+                  itemBuilder: (context, i) {
+                    final expense = dayRecord.expenses[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                expense.name,
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                expense.time,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              Text(
+                                '₹${expense.amount.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (expense.items != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                expense.items!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[500],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddExpenseDialog(index: index),
+                      ).then((_) => onDayUpdated());
+                    },
+                    icon: Icon(Icons.add),
+                    label: Text('Add Expense'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).appBarTheme.backgroundColor,
+                      foregroundColor:
+                          Theme.of(context).appBarTheme.foregroundColor,
+                      minimumSize: Size(120, 36),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
