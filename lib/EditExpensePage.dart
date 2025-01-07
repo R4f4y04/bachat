@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:giki_expense/models/month_record.dart';
 import 'package:hive/hive.dart';
 import 'data.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class EditDayPage extends StatefulWidget {
   final int index; // The index of the selected day in the data list
@@ -48,172 +49,195 @@ class _EditDayPageState extends State<EditDayPage> {
         items: newItems,
       );
 
-      // Update the expense
-      double oldAmount = expenses[expenseIndex].amount;
+      // Only update the local expenses array
       expenses[expenseIndex] = updatedExpense;
 
-      // Update totals
-      // Update the current month's data immediately
-      currentMonth.days[widget.index].expenses[expenseIndex] = updatedExpense;
-      currentMonth.days[widget.index].totalSpent += (newAmount - oldAmount);
-      currentMonth.totalSpent += (newAmount - oldAmount);
-
-      // Save to Hive immediately
-      monthsBox.put(currentMonth.key, currentMonth).then((_) {
-        // Notify parent of changes
-        Navigator.pop(context, true);
-      });
+      // Hide keyboard
+      FocusScope.of(context).unfocus();
     });
   }
 
   void _deleteExpense(int expenseIndex) {
     setState(() {
       final deletedAmount = expenses[expenseIndex].amount;
-
-      // Update both local and stored data immediately
       expenses.removeAt(expenseIndex);
-      currentMonth.days[widget.index].expenses.removeAt(expenseIndex);
-      currentMonth.days[widget.index].totalSpent -= deletedAmount;
-      currentMonth.totalSpent -= deletedAmount;
 
-      // Save to Hive immediately
-      monthsBox.put(currentMonth.key, currentMonth).then((_) {
-        if (expenses.isEmpty) {
-          Navigator.pop(context, true);
-        }
-      });
+      // Only remove from local state
+      // Updates to Hive will happen when Save Day is pressed
+    });
+  }
+
+  Future<void> _handleRefresh() async {
+    setState(() {
+      final latestMonth = monthsBox.values.last;
+      expenses = List.from(latestMonth.days[widget.index].expenses);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Expenses for Day ${widget.index + 1}'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: expenses.length,
-          itemBuilder: (context, expenseIndex) {
-            final expense = expenses[expenseIndex];
-            final TextEditingController customPlaceController =
-                TextEditingController(text: expense.name);
-            final TextEditingController amountController =
-                TextEditingController(text: expense.amount.toString());
-            final TextEditingController itemsController =
-                TextEditingController(text: expense.items ?? '');
+        appBar: AppBar(
+          title: Text('Edit Expenses for Day ${widget.index + 1}'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: LiquidPullToRefresh(
+            onRefresh: _handleRefresh,
+            color: Theme.of(context).primaryColor,
+            height: 100,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            child: ListView.builder(
+              itemCount: expenses.length,
+              itemBuilder: (context, expenseIndex) {
+                final expense = expenses[expenseIndex];
+                final TextEditingController customPlaceController =
+                    TextEditingController(text: expense.name);
+                final TextEditingController amountController =
+                    TextEditingController(text: expense.amount.toString());
+                final TextEditingController itemsController =
+                    TextEditingController(text: expense.items ?? '');
 
-            // Rest of your existing UI code...
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextField(
-                      controller: customPlaceController,
-                      decoration: InputDecoration(
-                          fillColor:
-                              Theme.of(context).appBarTheme.backgroundColor,
-                          border: OutlineInputBorder(),
-                          labelText: 'Place',
-                          labelStyle: TextStyle(
-                              color: Theme.of(context)
-                                  .appBarTheme
-                                  .foregroundColor)),
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: amountController,
-                      decoration: InputDecoration(
-                          fillColor:
-                              Theme.of(context).appBarTheme.backgroundColor,
-                          border: OutlineInputBorder(),
-                          labelText: 'Amount Spent',
-                          labelStyle: TextStyle(
-                              color: Theme.of(context)
-                                  .appBarTheme
-                                  .foregroundColor)),
-                      keyboardType: TextInputType.number,
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: itemsController,
-                      decoration: InputDecoration(
-                          fillColor:
-                              Theme.of(context).appBarTheme.backgroundColor,
-                          border: OutlineInputBorder(),
-                          labelText: 'Items',
-                          hintText: "Optional",
-                          labelStyle: TextStyle(
-                              color: Theme.of(context)
-                                  .appBarTheme
-                                  .foregroundColor)),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Rest of your existing UI code...
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).appBarTheme.foregroundColor,
-                            foregroundColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                          ),
-                          onPressed: () {
-                            final newPlace = customPlaceController.text;
-                            final newAmountText = amountController.text;
-                            final newAmount = double.tryParse(newAmountText);
-
-                            if (newPlace.isNotEmpty && newAmount != null) {
-                              _saveChanges(expenseIndex, newPlace, newAmount,
-                                  itemsController.text);
-                            }
-                          },
-                          child: Text('Save'),
+                        TextField(
+                          controller: customPlaceController,
+                          decoration: InputDecoration(
+                              fillColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                              border: OutlineInputBorder(),
+                              labelText: 'Place',
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .appBarTheme
+                                      .foregroundColor)),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            foregroundColor:
-                                Theme.of(context).appBarTheme.foregroundColor,
-                          ),
-                          onPressed: () {
-                            _deleteExpense(expenseIndex);
-                          },
-                          child: Text('Delete'),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: amountController,
+                          decoration: InputDecoration(
+                              fillColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                              border: OutlineInputBorder(),
+                              labelText: 'Amount Spent',
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .appBarTheme
+                                      .foregroundColor)),
+                          keyboardType: TextInputType.number,
+                        ),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: itemsController,
+                          decoration: InputDecoration(
+                              fillColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                              border: OutlineInputBorder(),
+                              labelText: 'Items',
+                              hintText: "Optional",
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .appBarTheme
+                                      .foregroundColor)),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .appBarTheme
+                                    .foregroundColor,
+                                foregroundColor: Theme.of(context)
+                                    .appBarTheme
+                                    .backgroundColor,
+                              ),
+                              onPressed: () {
+                                final newPlace = customPlaceController.text;
+                                final newAmountText = amountController.text;
+                                final newAmount =
+                                    double.tryParse(newAmountText);
+
+                                if (newPlace.isNotEmpty && newAmount != null) {
+                                  _saveChanges(expenseIndex, newPlace,
+                                      newAmount, itemsController.text);
+                                }
+                              },
+                              child: Text('Save'),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .appBarTheme
+                                    .backgroundColor,
+                                foregroundColor: Theme.of(context)
+                                    .appBarTheme
+                                    .foregroundColor,
+                              ),
+                              onPressed: () {
+                                _deleteExpense(expenseIndex);
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
-        onPressed: () {
-          if (expenses.isNotEmpty) {
-            // Save and go back with updated data
-            currentMonth.days[widget.index].expenses.clear();
-            currentMonth.days[widget.index].expenses.addAll(expenses);
-            Navigator.pop(context);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Please add at least one expense.')),
-            );
-          }
-        },
-        label: Text('Save Day'),
-        icon: Icon(Icons.save),
-      ),
-    );
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+          onPressed: () async {
+            if (expenses.isNotEmpty) {
+              try {
+                final latestMonth = monthsBox.values.last;
+
+                // Calculate new day total
+                double newDayTotal =
+                    expenses.fold(0.0, (sum, exp) => sum + exp.amount);
+
+                // Update day expenses first
+                latestMonth.days[widget.index].expenses.clear();
+                latestMonth.days[widget.index].expenses.addAll(expenses);
+                latestMonth.days[widget.index].totalSpent = newDayTotal;
+
+                // Recalculate month total from all days
+                latestMonth.totalSpent = latestMonth.days
+                    .fold(0.0, (sum, day) => sum + day.totalSpent);
+
+                print('Recalculated month total: ${latestMonth.totalSpent}');
+
+                // Save to Hive
+                await monthsBox.put(latestMonth.key, latestMonth);
+                await monthsBox.flush();
+
+                // Verify save
+                final savedMonth = monthsBox.get(latestMonth.key);
+                print('Verified month total: ${savedMonth?.totalSpent}');
+
+                Navigator.pop(context, {'refresh': true});
+              } catch (e) {
+                print('Error saving data: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error saving changes: $e')),
+                );
+              }
+            }
+          },
+          label: Text('Save Day'),
+          icon: Icon(Icons.save),
+        ));
   }
 }
