@@ -242,7 +242,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-class DayCard extends StatelessWidget {
+class DayCard extends StatefulWidget {
   final DayRecord dayRecord;
   final int index;
   final bool isExpanded;
@@ -263,22 +263,34 @@ class DayCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DayCard> createState() => _DayCardState();
+}
+
+class _DayCardState extends State<DayCard> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Slidable(
-        key: ValueKey(index),
+        key: ValueKey(widget.index),
         endActionPane: ActionPane(
           motion: const StretchMotion(),
           children: [
             SlidableAction(
-              onPressed: (_) {
-                Navigator.push(
+              onPressed: (_) async {
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditDayPage(index: index),
+                    builder: (context) => EditDayPage(index: widget.index),
                   ),
                 );
+
+                if (result != null && result['refresh'] == true) {
+                  setState(() {
+                    widget
+                        .onDayUpdated(); // Refresh entire state including app bar
+                  });
+                }
               },
               icon: Icons.edit,
               backgroundColor: Colors.transparent,
@@ -286,7 +298,13 @@ class DayCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             SlidableAction(
-              onPressed: (_) => onDelete(index),
+              onPressed: (_) async {
+                await widget.onDelete(widget.index);
+                setState(() {
+                  widget
+                      .onDayUpdated(); // Refresh entire state including app bar
+                });
+              },
               icon: Icons.delete,
               backgroundColor: Colors.transparent,
               foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
@@ -295,7 +313,7 @@ class DayCard extends StatelessWidget {
           ],
         ),
         child: GestureDetector(
-          onTap: () => onExpandToggle(index),
+          onTap: () => widget.onExpandToggle(widget.index),
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -308,7 +326,7 @@ class DayCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Day ${index + 1}',
+                    'Day ${widget.index + 1}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -316,15 +334,15 @@ class DayCard extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Total spent: Rs. ${dayRecord.totalSpent.toStringAsFixed(2)}',
+                    'Total spent: Rs. ${widget.dayRecord.totalSpent.toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    formatDate(dayRecord.date),
+                    formatDate(widget.dayRecord.date),
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
-                  if (isExpanded) ...[
+                  if (widget.isExpanded) ...[
                     Divider(),
                     Text(
                       'Detailed Expenses:',
@@ -334,7 +352,7 @@ class DayCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8),
-                    ...dayRecord.expenses
+                    ...widget.dayRecord.expenses
                         .map((expense) => Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Column(
@@ -382,7 +400,7 @@ class DayCard extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton.icon(
-                      onPressed: () => onAddExpense(index),
+                      onPressed: () => widget.onAddExpense(widget.index),
                       icon: Icon(Icons.add),
                       label: Text('Add Expense'),
                       style: ElevatedButton.styleFrom(
