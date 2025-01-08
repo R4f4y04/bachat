@@ -239,7 +239,7 @@ class _HomeState extends State<Home> {
         },
         showChildOpacityTransition: false, // Nice fade effect while refreshing
         color: Theme.of(context).cardColor, // Match app theme
-        height: 100, // Pull distance
+        height: 80, // Pull distance
         animSpeedFactor: 2, // Animation speed
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         child: ValueListenableBuilder(
