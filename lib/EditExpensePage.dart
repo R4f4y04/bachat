@@ -67,13 +67,6 @@ class _EditDayPageState extends State<EditDayPage> {
     });
   }
 
-  Future<void> _handleRefresh() async {
-    setState(() {
-      final latestMonth = monthsBox.values.last;
-      expenses = List.from(latestMonth.days[widget.index].expenses);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,118 +75,107 @@ class _EditDayPageState extends State<EditDayPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: LiquidPullToRefresh(
-            onRefresh: _handleRefresh,
-            color: Theme.of(context).primaryColor,
-            height: 100,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            child: ListView.builder(
-              itemCount: expenses.length,
-              itemBuilder: (context, expenseIndex) {
-                final expense = expenses[expenseIndex];
-                final TextEditingController customPlaceController =
-                    TextEditingController(text: expense.name);
-                final TextEditingController amountController =
-                    TextEditingController(text: expense.amount.toString());
-                final TextEditingController itemsController =
-                    TextEditingController(text: expense.items ?? '');
+          child: ListView.builder(
+            itemCount: expenses.length,
+            itemBuilder: (context, expenseIndex) {
+              final expense = expenses[expenseIndex];
+              final TextEditingController customPlaceController =
+                  TextEditingController(text: expense.name);
+              final TextEditingController amountController =
+                  TextEditingController(text: expense.amount.toString());
+              final TextEditingController itemsController =
+                  TextEditingController(text: expense.items ?? '');
 
-                // Rest of your existing UI code...
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextField(
-                          controller: customPlaceController,
-                          decoration: InputDecoration(
-                              fillColor:
-                                  Theme.of(context).appBarTheme.backgroundColor,
-                              border: OutlineInputBorder(),
-                              labelText: 'Place',
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .appBarTheme
-                                      .foregroundColor)),
-                        ),
-                        SizedBox(height: 8),
-                        TextField(
-                          controller: amountController,
-                          decoration: InputDecoration(
-                              fillColor:
-                                  Theme.of(context).appBarTheme.backgroundColor,
-                              border: OutlineInputBorder(),
-                              labelText: 'Amount Spent',
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .appBarTheme
-                                      .foregroundColor)),
-                          keyboardType: TextInputType.number,
-                        ),
-                        SizedBox(height: 8),
-                        TextField(
-                          controller: itemsController,
-                          decoration: InputDecoration(
-                              fillColor:
-                                  Theme.of(context).appBarTheme.backgroundColor,
-                              border: OutlineInputBorder(),
-                              labelText: 'Items',
-                              hintText: "Optional",
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .appBarTheme
-                                      .foregroundColor)),
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context)
+              // Rest of your existing UI code...
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: customPlaceController,
+                        decoration: InputDecoration(
+                            fillColor:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            border: OutlineInputBorder(),
+                            labelText: 'Place',
+                            labelStyle: TextStyle(
+                                color: Theme.of(context)
                                     .appBarTheme
-                                    .foregroundColor,
-                                foregroundColor: Theme.of(context)
+                                    .foregroundColor)),
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: amountController,
+                        decoration: InputDecoration(
+                            fillColor:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            border: OutlineInputBorder(),
+                            labelText: 'Amount Spent',
+                            labelStyle: TextStyle(
+                                color: Theme.of(context)
                                     .appBarTheme
-                                    .backgroundColor,
-                              ),
-                              onPressed: () {
-                                final newPlace = customPlaceController.text;
-                                final newAmountText = amountController.text;
-                                final newAmount =
-                                    double.tryParse(newAmountText);
+                                    .foregroundColor)),
+                        keyboardType: TextInputType.number,
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: itemsController,
+                        decoration: InputDecoration(
+                            fillColor:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            border: OutlineInputBorder(),
+                            labelText: 'Items',
+                            hintText: "Optional",
+                            labelStyle: TextStyle(
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .foregroundColor)),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).appBarTheme.foregroundColor,
+                              foregroundColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                            ),
+                            onPressed: () {
+                              final newPlace = customPlaceController.text;
+                              final newAmountText = amountController.text;
+                              final newAmount = double.tryParse(newAmountText);
 
-                                if (newPlace.isNotEmpty && newAmount != null) {
-                                  _saveChanges(expenseIndex, newPlace,
-                                      newAmount, itemsController.text);
-                                }
-                              },
-                              child: Text('Save'),
+                              if (newPlace.isNotEmpty && newAmount != null) {
+                                _saveChanges(expenseIndex, newPlace, newAmount,
+                                    itemsController.text);
+                              }
+                            },
+                            child: Text('Save'),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).appBarTheme.backgroundColor,
+                              foregroundColor:
+                                  Theme.of(context).appBarTheme.foregroundColor,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context)
-                                    .appBarTheme
-                                    .backgroundColor,
-                                foregroundColor: Theme.of(context)
-                                    .appBarTheme
-                                    .foregroundColor,
-                              ),
-                              onPressed: () {
-                                _deleteExpense(expenseIndex);
-                              },
-                              child: Text('Delete'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            onPressed: () {
+                              _deleteExpense(expenseIndex);
+                            },
+                            child: Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(
