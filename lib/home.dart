@@ -4,6 +4,7 @@ import 'package:giki_expense/EditExpensePage.dart';
 import 'package:giki_expense/addExpenseDialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:giki_expense/utilities/util_functions.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/month_record.dart';
@@ -21,6 +22,7 @@ class _HomeState extends State<Home> {
   MonthRecord? currentMonth;
   double monthlySpent = 0;
   List<bool> expandedStates = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -131,6 +133,52 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    try {
+      // Show loading state
+      setState(() {
+        isLoading = true;
+      });
+
+      // Add minimal delay for smooth animation
+      await Future.delayed(Duration(milliseconds: 800));
+
+      // Reload current month
+      _loadCurrentMonth();
+
+      // Recalculate monthly spent
+      if (currentMonth != null) {
+        double newMonthlySpent = 0;
+        for (var day in currentMonth!.days) {
+          newMonthlySpent += day.totalSpent;
+        }
+
+        // Update state
+        setState(() {
+          monthlySpent = newMonthlySpent;
+          currentMonth!.totalSpent = newMonthlySpent;
+          isLoading = false;
+        });
+
+        // Save updated month
+        await monthsBox.put(currentMonth!.key, currentMonth!);
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Refreshed successfully')),
+        );
+      }
+    } catch (e) {
+      // Handle any errors
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error refreshing: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
@@ -180,56 +228,71 @@ class _HomeState extends State<Home> {
         ),
         centerTitle: true,
       ),
-      body: ValueListenableBuilder(
-        valueListenable: monthsBox.listenable(),
-        builder: (context, Box<MonthRecord> box, _) {
-          if (currentMonth == null) {
-            _loadCurrentMonth(); // Add this line
-            return Center(child: CircularProgressIndicator());
-          }
-
-          return ListView.builder(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            itemCount: currentMonth!.days.length,
-            itemBuilder: (context, index) {
-              return DayCard(
-                dayRecord: currentMonth!.days[index],
-                index: index,
-                isExpanded: expandedStates[index],
-                onExpandToggle: (index) {
-                  setState(() {
-                    expandedStates[index] = !expandedStates[index];
-                  });
-                },
-                onDelete: (index) {
-                  setState(() {
-                    currentMonth!.totalSpent -=
-                        currentMonth!.days[index].totalSpent;
-                    currentMonth!.days.removeAt(index);
-                    expandedStates.removeAt(index);
-                    monthsBox.put(currentMonth!.key, currentMonth!);
-                  });
-                },
-                onAddExpense: (index) async {
-                  final result = await showDialog(
-                    context: context,
-                    builder: (context) => AddExpenseDialog(
-                      index: index,
-                    ),
-                  );
-                  if (result != null) {
-                    _addExpenseToDay(index, result);
-                  }
-                },
-                onDayUpdated: () {
-                  setState(() {
-                    _loadCurrentMonth();
-                  });
-                },
-              );
-            },
-          );
+      body: LiquidPullToRefresh(
+        onRefresh: () async {
+          // Implement refresh logic
+          await Future.delayed(Duration(
+              milliseconds: 700)); // Minimal delay for smooth animation
+          setState(() {
+            _loadCurrentMonth();
+          });
         },
+        showChildOpacityTransition: false, // Nice fade effect while refreshing
+        color: Theme.of(context).cardColor, // Match app theme
+        height: 100, // Pull distance
+        animSpeedFactor: 2, // Animation speed
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        child: ValueListenableBuilder(
+          valueListenable: monthsBox.listenable(),
+          builder: (context, Box<MonthRecord> box, _) {
+            if (currentMonth == null) {
+              _loadCurrentMonth(); // Add this line
+              return Center(child: CircularProgressIndicator());
+            }
+
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              itemCount: currentMonth!.days.length,
+              itemBuilder: (context, index) {
+                return DayCard(
+                  dayRecord: currentMonth!.days[index],
+                  index: index,
+                  isExpanded: expandedStates[index],
+                  onExpandToggle: (index) {
+                    setState(() {
+                      expandedStates[index] = !expandedStates[index];
+                    });
+                  },
+                  onDelete: (index) {
+                    setState(() {
+                      currentMonth!.totalSpent -=
+                          currentMonth!.days[index].totalSpent;
+                      currentMonth!.days.removeAt(index);
+                      expandedStates.removeAt(index);
+                      monthsBox.put(currentMonth!.key, currentMonth!);
+                    });
+                  },
+                  onAddExpense: (index) async {
+                    final result = await showDialog(
+                      context: context,
+                      builder: (context) => AddExpenseDialog(
+                        index: index,
+                      ),
+                    );
+                    if (result != null) {
+                      _addExpenseToDay(index, result);
+                    }
+                  },
+                  onDayUpdated: () {
+                    setState(() {
+                      _loadCurrentMonth();
+                    });
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
