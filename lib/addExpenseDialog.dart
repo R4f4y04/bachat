@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:giki_expense/models/month_record.dart';
-import 'data.dart';
+import 'utilities/data.dart';
 
 class AddExpenseDialog extends StatefulWidget {
   final int index;

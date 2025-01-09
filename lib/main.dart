@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'data.dart';
+import 'utilities/data.dart';
 import 'home.dart';
 import 'models/month_record.dart';
 import 'screens/new_month_screen.dart';

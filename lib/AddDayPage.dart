@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'data.dart';
+import 'utilities/data.dart';
 
 class AddDayPage extends StatefulWidget {
   @override

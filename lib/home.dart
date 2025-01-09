@@ -8,7 +8,7 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/month_record.dart';
-import 'data.dart';
+import 'utilities/data.dart';
 import 'screens/history_screen.dart';
 import 'screens/new_month_screen.dart';
 
