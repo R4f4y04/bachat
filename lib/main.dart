@@ -7,6 +7,7 @@ import 'models/month_record.dart';
 import 'screens/new_month_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
   // Register adapters
@@ -17,9 +18,12 @@ void main() async {
   // Open boxes
   await Hive.openBox<MonthRecord>('months');
 
+  final themeManager = ThemeManager();
+  await themeManager.initTheme();
+
   runApp(
     ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
+      create: (_) => themeManager,
       child: ExpenseApp(),
     ),
   );

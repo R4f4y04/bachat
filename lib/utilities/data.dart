@@ -1,3 +1,4 @@
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -85,14 +86,27 @@ class MonthData {
 List<MonthData> monthsData = [];
 
 class ThemeManager with ChangeNotifier {
-  bool _isDarkTheme = false;
+  static const String themeBoxName = 'theme_prefs';
+  static const String themeKey = 'is_dark';
+  late Box themeBox;
+  bool _isDarkTheme = true;
+
+  ThemeManager() {
+    initTheme();
+  }
 
   bool get isDarkTheme => _isDarkTheme;
-
   ThemeData get currentTheme => _isDarkTheme ? darkTheme : lightTheme;
 
-  void toggleTheme() {
+  Future<void> initTheme() async {
+    themeBox = await Hive.openBox(themeBoxName);
+    _isDarkTheme = themeBox.get(themeKey, defaultValue: false);
+    notifyListeners();
+  }
+
+  Future<void> toggleTheme() async {
     _isDarkTheme = !_isDarkTheme;
+    await themeBox.put(themeKey, _isDarkTheme);
     notifyListeners();
   }
 }

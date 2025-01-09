@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:giki_expense/models/month_record.dart';
 import 'package:hive/hive.dart';
-import 'utilities/data.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class EditDayPage extends StatefulWidget {
   final int index; // The index of the selected day in the data list
