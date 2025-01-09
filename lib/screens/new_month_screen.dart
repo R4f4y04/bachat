@@ -17,29 +17,52 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Start New Month'),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _monthNameController,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 labelText: 'Month Name',
-                border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 20),
             TextField(
               controller: _budgetController,
               decoration: InputDecoration(
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                labelStyle: TextStyle(
+                    color: Theme.of(context).appBarTheme.foregroundColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 labelText: 'Intended Budget',
-                border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 30),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+                padding: EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 4,
+              ),
               onPressed: () async {
                 if (_monthNameController.text.isNotEmpty &&
                     _budgetController.text.isNotEmpty) {
@@ -56,7 +79,10 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                   );
                 }
               },
-              child: Text('Start Month'),
+              child: Text(
+                'Start Month',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),
