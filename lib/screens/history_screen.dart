@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/month_record.dart';
+import 'month_analytics_screen.dart';
 
 class HistoryScreen extends StatelessWidget {
   @override
@@ -36,12 +37,23 @@ class HistoryScreen extends StatelessWidget {
                 child: ExpansionTile(
                   title: Text(month.monthName),
                   subtitle: Text(duration),
+                  trailing: IconButton(
+                    icon: Icon(Icons.analytics),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  MonthAnalyticsScreen(monthRecord: month)));
+                    },
+                  ),
                   children: [
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Icon(Icons.expand_more),
                           Text('Status: $completionStatus'),
                           SizedBox(height: 8),
                           Text('Total Days: $daysCount'),
