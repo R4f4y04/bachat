@@ -57,7 +57,6 @@ class _EditDayPageState extends State<EditDayPage> {
 
   void _deleteExpense(int expenseIndex) {
     setState(() {
-      final deletedAmount = expenses[expenseIndex].amount;
       expenses.removeAt(expenseIndex);
 
       // Only remove from local state
