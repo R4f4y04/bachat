@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/month_record.dart';
@@ -28,6 +30,22 @@ class MonthAnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildDailyExpensesCard(BuildContext context) {
+    final maxAmount = monthRecord.days
+        .fold(0.0, (max, day) => day.totalSpent > max ? day.totalSpent : max);
+
+    // Calculate nice interval
+    final double rawInterval = maxAmount / 5;
+    final double magnitude =
+        pow(10, (log(rawInterval) / ln10).floor()).toDouble();
+    final double niceInterval = (rawInterval / magnitude).ceil() * magnitude;
+
+    String formatAmount(double value) {
+      if (value >= 1000) {
+        return '${(value / 1000).toStringAsFixed(1)}K';
+      }
+      return value.toInt().toString();
+    }
+
     return Card(
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -41,21 +59,51 @@ class MonthAnalyticsScreen extends StatelessWidget {
               height: 300,
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: true),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: true,
+                    horizontalInterval: niceInterval,
+                    verticalInterval: 5,
+                  ),
                   titlesData: FlTitlesData(
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: 1,
+                        interval: 5,
                         getTitlesWidget: (value, meta) {
-                          return Text(value.toInt().toString());
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < monthRecord.days.length) {
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text('${value.toInt() + 1}'),
+                            );
+                          }
+                          return const SizedBox();
                         },
                       ),
                     ),
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: niceInterval,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              'Rs.${formatAmount(value)}',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          );
+                        },
+                      ),
                     ),
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
+                  // ... rest of the chart configuration remains the same
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
                     LineChartBarData(
