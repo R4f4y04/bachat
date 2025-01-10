@@ -135,6 +135,11 @@ class MonthAnalyticsScreen extends StatelessWidget {
         );
       }
     }
+    final double totalExpenses =
+        categoryTotals.values.fold(0, (sum, amount) => sum + amount);
+
+    final sortedEntries = categoryTotals.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     return Card(
       child: Padding(
@@ -149,12 +154,26 @@ class MonthAnalyticsScreen extends StatelessWidget {
               height: 300,
               child: PieChart(
                 PieChartData(
-                  sections: categoryTotals.entries.map((entry) {
+                  sections: sortedEntries.asMap().entries.map((entry) {
+                    final categoryEntry = entry.value;
+                    final percentage = categoryEntry.value / totalExpenses;
+                    // Opacity ranges from 1.0 to 0.2 based on percentage
+                    final opacity = 0.2 + (percentage * 0.8);
+
                     return PieChartSectionData(
-                      value: entry.value,
-                      title: '${entry.key}\n${entry.value.toStringAsFixed(0)}',
+                      value: categoryEntry.value,
+                      title:
+                          '${categoryEntry.key}\n${categoryEntry.value.toStringAsFixed(0)}',
                       radius: 100,
-                      titleStyle: TextStyle(fontSize: 12),
+                      titleStyle: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      color: Theme.of(context)
+                          .appBarTheme
+                          .foregroundColor!
+                          .withOpacity(opacity),
                     );
                   }).toList(),
                 ),
