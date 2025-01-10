@@ -91,7 +91,7 @@ class MonthAnalyticsScreen extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: Text(
-                              'Rs.${formatAmount(value)}',
+                              formatAmount(value),
                               style: TextStyle(fontSize: 10),
                             ),
                           );
