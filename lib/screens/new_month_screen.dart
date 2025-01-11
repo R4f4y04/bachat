@@ -50,11 +50,31 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final inputDecoration = InputDecoration(
+      filled: true,
+      fillColor: theme.cardColor,
+      labelStyle: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: theme.primaryColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Start New Month'),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        centerTitle: true,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -65,42 +85,27 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
             children: [
               TextField(
                 controller: _monthNameController,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                decoration: inputDecoration.copyWith(
                   labelText: 'Month Name',
+                  hintText: 'Enter month name',
                 ),
               ),
               SizedBox(height: 20),
               TextField(
                 controller: _budgetController,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                decoration: inputDecoration.copyWith(
                   labelText: 'Intended Budget',
+                  hintText: 'Enter budget amount',
                 ),
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 value: selectedInstitute,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                decoration: inputDecoration.copyWith(
                   labelText: 'Select Institute',
                 ),
+                dropdownColor: theme.cardColor,
                 items: [
                   ...institutePlaces.keys.map((institute) => DropdownMenuItem(
                         value: institute,
@@ -122,13 +127,19 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                   });
                 },
               ),
-              SizedBox(height: 20),
               if (selectedInstitute != null) ...[
-                Text('Selected Places:',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 20),
+                Text(
+                  'Selected Places:',
+                  style: theme.textTheme.titleMedium,
+                ),
                 SizedBox(height: 8),
                 Container(
                   height: 200,
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: selectedPlaces.length,
@@ -153,17 +164,15 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                     Expanded(
                       child: TextField(
                         controller: _customPlaceController,
-                        decoration: InputDecoration(
+                        decoration: inputDecoration.copyWith(
                           labelText: 'Add Custom Place',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          hintText: 'Enter place name',
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: 12),
                     IconButton(
-                      icon: Icon(Icons.add),
+                      icon: Icon(Icons.add_circle_outline),
                       onPressed: () {
                         if (_customPlaceController.text.isNotEmpty) {
                           setState(() {
@@ -176,15 +185,16 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                   ],
                 ),
               ],
-              SizedBox(height: 20),
+              SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: theme.primaryColor,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 0,
                 ),
                 onPressed: () async {
                   if (_monthNameController.text.isNotEmpty &&
@@ -211,14 +221,16 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(
-                              'Please fill all fields and select at least one place')),
+                        content: Text(
+                          'Please fill all fields and select at least one place',
+                        ),
+                      ),
                     );
                   }
                 },
                 child: Text(
                   'Start Month',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ],
