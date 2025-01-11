@@ -2,14 +2,52 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-final List<String> options = [
-  'Raju',
-  'Ayan',
-  'Hot N Spicy',
-  'Karachi Biryani',
-  'Mess',
-  'Tahir'
-];
+final Map<String, List<String>> institutePlaces = {
+  'GIKI': ['Raju', 'Ayan', 'Hot N Spicy', 'Karachi Biryani', 'Mess', 'Tahir'],
+  'NUST': [
+    'NUST Cafe',
+    'Student Center',
+    'Business District',
+    'C3A Cafe',
+    'NUST Cafe 2'
+  ],
+  // Add more institutes as needed
+};
+
+// Empty list that will be populated based on user selection
+List<String> options = [];
+
+class PlacesManager {
+  static const String placesBoxName = 'places_prefs';
+  static const String placesKey = 'selected_places';
+  late Box placesBox;
+
+  Future<void> initPlaces() async {
+    placesBox = await Hive.openBox(placesBoxName);
+    List<String>? savedPlaces = placesBox.get(placesKey)?.cast<String>();
+    if (savedPlaces != null) {
+      options = savedPlaces;
+    }
+  }
+
+  Future<void> savePlaces(List<String> selectedPlaces) async {
+    options = selectedPlaces;
+    await placesBox.put(placesKey, selectedPlaces);
+  }
+
+  // Helper method to get places for an institute
+  List<String> getInstitutePlaces(String institute) {
+    return institutePlaces[institute] ?? [];
+  }
+
+  // Add a custom place to options
+  Future<void> addCustomPlace(String place) async {
+    if (!options.contains(place)) {
+      options.add(place);
+      await savePlaces(options);
+    }
+  }
+}
 
 class dayexpense {
   double total = 0;

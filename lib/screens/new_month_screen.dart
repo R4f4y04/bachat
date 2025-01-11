@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:giki_expense/home.dart';
 import 'package:hive/hive.dart';
 import '../models/month_record.dart';
+import 'institute_selection_screen.dart';
 
 class NewMonthScreen extends StatefulWidget {
   const NewMonthScreen({super.key});
@@ -66,19 +67,28 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
                 elevation: 4,
               ),
               onPressed: () async {
-                if (_monthNameController.text.isNotEmpty &&
-                    _budgetController.text.isNotEmpty) {
-                  final monthsBox = Hive.box<MonthRecord>('months');
-                  final newMonth = MonthRecord(
-                    monthName: _monthNameController.text,
-                    startDate: DateTime.now(),
-                    intendedBudget: double.parse(_budgetController.text),
-                  );
-                  await monthsBox.add(newMonth);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
+                // Show institute selection first
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InstituteSelectionScreen()),
+                );
+
+                if (result == true) {
+                  if (_monthNameController.text.isNotEmpty &&
+                      _budgetController.text.isNotEmpty) {
+                    final monthsBox = Hive.box<MonthRecord>('months');
+                    final newMonth = MonthRecord(
+                      monthName: _monthNameController.text,
+                      startDate: DateTime.now(),
+                      intendedBudget: double.parse(_budgetController.text),
+                    );
+                    await monthsBox.add(newMonth);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                    );
+                  }
                 }
               },
               child: Text(

@@ -17,9 +17,13 @@ void main() async {
 
   // Open boxes
   await Hive.openBox<MonthRecord>('months');
+  await Hive.openBox('places_prefs');
 
   final themeManager = ThemeManager();
   await themeManager.initTheme();
+
+  final placesManager = PlacesManager();
+  await placesManager.initPlaces();
 
   runApp(
     ChangeNotifierProvider(
