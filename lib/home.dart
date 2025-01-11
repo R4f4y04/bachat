@@ -13,6 +13,8 @@ import 'screens/history_screen.dart';
 import 'screens/new_month_screen.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 }
@@ -298,8 +300,8 @@ class _HomeState extends State<Home> {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
         onPressed: () => _addNewDay(),
-        child: Icon(Icons.add),
         tooltip: 'Add New Day',
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -315,7 +317,7 @@ class DayCard extends StatefulWidget {
   final VoidCallback onDayUpdated;
 
   const DayCard({
-    Key? key,
+    super.key,
     required this.dayRecord,
     required this.index,
     required this.isExpanded,
@@ -323,7 +325,7 @@ class DayCard extends StatefulWidget {
     required this.onDelete,
     required this.onAddExpense,
     required this.onDayUpdated,
-  }) : super(key: key);
+  });
 
   @override
   State<DayCard> createState() => _DayCardState();
@@ -458,7 +460,7 @@ class _DayCardState extends State<DayCard> {
                                 ],
                               ),
                             ))
-                        .toList(),
+                        ,
                   ],
                   Align(
                     alignment: Alignment.centerRight,

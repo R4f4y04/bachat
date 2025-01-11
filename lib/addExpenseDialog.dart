@@ -85,7 +85,7 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
                     value: place,
                     child: Text(place),
                   );
-                }).toList(),
+                }),
                 DropdownMenuItem<String>(
                   value: 'Other',
                   child: Text('Other'),

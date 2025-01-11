@@ -30,6 +30,8 @@ void main() async {
 }
 
 class ExpenseApp extends StatelessWidget {
+  const ExpenseApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);

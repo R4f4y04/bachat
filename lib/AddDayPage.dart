@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'utilities/data.dart';
 
 class AddDayPage extends StatefulWidget {
+  const AddDayPage({super.key});
+
   @override
   _AddDayPageState createState() => _AddDayPageState();
 }
@@ -73,7 +75,7 @@ class _AddDayPageState extends State<AddDayPage> {
                     value: place,
                     child: Text(place),
                   );
-                }).toList(),
+                }),
                 DropdownMenuItem<String>(
                   value: 'Other',
                   child: Text('Other'),

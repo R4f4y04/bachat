@@ -7,8 +7,7 @@ import '../models/month_record.dart';
 class MonthAnalyticsScreen extends StatelessWidget {
   final MonthRecord monthRecord;
 
-  const MonthAnalyticsScreen({Key? key, required this.monthRecord})
-      : super(key: key);
+  const MonthAnalyticsScreen({super.key, required this.monthRecord});
 
   @override
   Widget build(BuildContext context) {

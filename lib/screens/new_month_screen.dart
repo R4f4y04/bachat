@@ -4,6 +4,8 @@ import 'package:hive/hive.dart';
 import '../models/month_record.dart';
 
 class NewMonthScreen extends StatefulWidget {
+  const NewMonthScreen({super.key});
+
   @override
   _NewMonthScreenState createState() => _NewMonthScreenState();
 }
