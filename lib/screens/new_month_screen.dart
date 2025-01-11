@@ -188,8 +188,8 @@ class _NewMonthScreenState extends State<NewMonthScreen> {
               SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: theme.appBarTheme.foregroundColor,
+                  foregroundColor: theme.appBarTheme.backgroundColor,
                   padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
