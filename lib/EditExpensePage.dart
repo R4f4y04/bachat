@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:giki_expense/models/month_record.dart';
 import 'package:hive/hive.dart';
+import 'package:giki_expense/utilities/data.dart';
 
 class EditDayPage extends StatefulWidget {
   final int index; // The index of the selected day in the data list
@@ -93,43 +94,21 @@ class _EditDayPageState extends State<EditDayPage> {
                     children: [
                       TextField(
                         controller: customPlaceController,
-                        decoration: InputDecoration(
-                            fillColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            border: OutlineInputBorder(),
-                            labelText: 'Place',
-                            labelStyle: TextStyle(
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .foregroundColor)),
+                        decoration: AppStyles.getInputDecoration(context,
+                            labelText: 'Place', hintText: 'Enter a place'),
                       ),
                       SizedBox(height: 8),
                       TextField(
                         controller: amountController,
-                        decoration: InputDecoration(
-                            fillColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            border: OutlineInputBorder(),
-                            labelText: 'Amount Spent',
-                            labelStyle: TextStyle(
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .foregroundColor)),
+                        decoration: AppStyles.getInputDecoration(context,
+                            labelText: 'Amount', hintText: 'Enter amount'),
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 8),
                       TextField(
                         controller: itemsController,
-                        decoration: InputDecoration(
-                            fillColor:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            border: OutlineInputBorder(),
-                            labelText: 'Items',
-                            hintText: "Optional",
-                            labelStyle: TextStyle(
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .foregroundColor)),
+                        decoration: AppStyles.getInputDecoration(context,
+                            labelText: 'Items', hintText: 'Enter items'),
                       ),
                       SizedBox(height: 8),
                       Row(
