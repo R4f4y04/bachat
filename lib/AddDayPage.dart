@@ -62,13 +62,9 @@ class _AddDayPageState extends State<AddDayPage> {
             SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: selectedPlace,
-              decoration: InputDecoration(
-                fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                labelStyle: TextStyle(
-                    color: Theme.of(context).appBarTheme.foregroundColor),
-                border: OutlineInputBorder(),
-                labelText: 'Select Place',
-              ),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Select Place',
+                  hintText: 'Choose Point of Expenditure'),
               items: [
                 ...options.map((place) {
                   return DropdownMenuItem<String>(
@@ -91,34 +87,22 @@ class _AddDayPageState extends State<AddDayPage> {
               SizedBox(height: 16),
               TextField(
                 controller: customPlaceController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Custom Place',
-                ),
+                decoration: AppStyles.getInputDecoration(context,
+                    labelText: 'Custom Place', hintText: 'Enter Place Name'),
               ),
             ],
             SizedBox(height: 16),
             TextField(
               controller: amountController,
-              decoration: InputDecoration(
-                fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                labelStyle: TextStyle(
-                    color: Theme.of(context).appBarTheme.foregroundColor),
-                border: OutlineInputBorder(),
-                labelText: 'Amount Spent',
-              ),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Amount Spent', hintText: 'Enter Amount'),
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 16),
             TextField(
               controller: itemscontroller,
-              decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(),
-                  labelText: 'Items',
-                  hintText: "optional"),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Item', hintText: 'Enter Item Name (Optional)'),
             ),
             SizedBox(height: 16),
             ElevatedButton(

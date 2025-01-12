@@ -250,3 +250,30 @@ final darkTheme = ThemeData(
   ),
   dividerColor: Colors.grey[800],
 );
+
+class AppStyles {
+  static InputDecoration getInputDecoration(BuildContext context,
+      {String? labelText, String? hintText}) {
+    final theme = Theme.of(context);
+    return InputDecoration(
+      filled: true,
+      fillColor: theme.cardColor,
+      labelText: labelText,
+      hintText: hintText,
+      labelStyle: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: theme.primaryColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    );
+  }
+}
