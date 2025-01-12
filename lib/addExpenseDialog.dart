@@ -72,13 +72,8 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: selectedPlace,
-              decoration: InputDecoration(
-                fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                labelStyle: TextStyle(
-                    color: Theme.of(context).appBarTheme.foregroundColor),
-                border: OutlineInputBorder(),
-                labelText: 'Select Place',
-              ),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Select Place'),
               items: [
                 ...options.map((place) {
                   return DropdownMenuItem<String>(
@@ -101,37 +96,22 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
               SizedBox(height: 16),
               TextField(
                 controller: customPlaceController,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Custom Place',
-                ),
+                decoration: AppStyles.getInputDecoration(context,
+                    labelText: 'Custom Place'),
               ),
             ],
             SizedBox(height: 20),
             TextField(
               controller: amountController,
-              decoration: InputDecoration(
-                fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                labelStyle: TextStyle(
-                    color: Theme.of(context).appBarTheme.foregroundColor),
-                border: OutlineInputBorder(),
-                labelText: 'Amount Spent',
-              ),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Amount Spent'),
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
             TextField(
               controller: itemscontroller,
-              decoration: InputDecoration(
-                  fillColor: Theme.of(context).appBarTheme.backgroundColor,
-                  labelStyle: TextStyle(
-                      color: Theme.of(context).appBarTheme.foregroundColor),
-                  border: OutlineInputBorder(),
-                  labelText: 'Items',
-                  hintText: "Optional"),
+              decoration: AppStyles.getInputDecoration(context,
+                  labelText: 'Items', hintText: 'Optional'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
