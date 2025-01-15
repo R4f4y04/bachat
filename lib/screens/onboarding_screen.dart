@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:giki_expense/screens/new_month_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,35 +16,137 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<OnboardingPage> pages = [
     OnboardingPage(
-      title: 'Welcome to bachat : budget',
+      title: 'Welcome to Bachat: Budget',
       description:
-          'Your personal expense tracker designed for hassle-free budget management',
-      image: Icons.account_balance_wallet,
+          'Your personal expense tracker designed for hassle-free budget management.',
+      image: 'assets/welcome.png',
     ),
     OnboardingPage(
-      title: 'Track Daily Expenses',
+      title: 'Changing Theme',
       description:
-          'Add your daily expenses with detailed information about places and items',
-      image: Icons.add_chart,
+          'Easily switch between light and dark themes to suit your preference.',
+      image: 'assets/change_theme.png',
     ),
     OnboardingPage(
-      title: 'Smart Analytics',
-      description:
-          'View your spending patterns with beautiful charts and insights',
-      image: Icons.analytics,
+      title: 'Adding a New Day',
+      description: 'Add a new day to start tracking your expenses.',
+      image: 'assets/add_new_day.png',
     ),
     OnboardingPage(
-      title: 'Monthly Overview',
+      title: 'Editing a Day',
       description:
-          'Keep track of your monthly budget and expenses in one place',
-      image: Icons.calendar_month,
+          'Edit the details of a day, including adding and removing expenses.',
+      image: 'assets/edit_day.png',
+    ),
+    OnboardingPage(
+      title: 'Adding Expenses',
+      description:
+          'Add detailed expenses for each day, including place, amount, and items.',
+      image: 'assets/add_expense.png',
+    ),
+    OnboardingPage(
+      title: 'Deleting a Day',
+      description: 'Remove a day and its expenses from your records.',
+      image: 'assets/delete_day.png',
+    ),
+    OnboardingPage(
+      title: 'Saving a Month',
+      description: 'Save your monthly expenses and start a new month.',
+      image: 'assets/save_month.png',
+    ),
+    OnboardingPage(
+      title: 'Starting a New Month',
+      description: 'Set up a new month with a budget and selected places.',
+      image: 'assets/new_month.png',
+    ),
+    OnboardingPage(
+      title: 'Viewing Charts',
+      description: 'Analyze your spending patterns with detailed charts.',
+      image: 'assets/view_charts.png',
     ),
   ];
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _controller,
+            onPageChanged: (index) {
+              setState(() {
+                isLastPage = index == pages.length - 1;
+              });
+            },
+            itemCount: pages.length,
+            itemBuilder: (context, index) {
+              return OnboardingPageTemplate(
+                title: pages[index].title,
+                description: pages[index].description,
+                imagePath: pages[index].image,
+              );
+            },
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              height: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => _controller.jumpToPage(pages.length - 1),
+                    child: Text(
+                      'skip',
+                      style:
+                          TextStyle(color: theme.appBarTheme.foregroundColor),
+                    ),
+                  ),
+                  Center(
+                    child: SmoothPageIndicator(
+                      controller: _controller,
+                      count: pages.length,
+                      effect: WormEffect(
+                        spacing: 8,
+                        dotColor: theme.cardColor,
+                        activeDotColor: theme.appBarTheme.foregroundColor!,
+                      ),
+                      onDotClicked: (index) => _controller.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (isLastPage) {
+                        _completeOnboarding();
+                      } else {
+                        _controller.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    },
+                    child: Text(
+                      isLastPage ? 'start' : 'next',
+                      style:
+                          TextStyle(color: theme.appBarTheme.foregroundColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _completeOnboarding() async {
@@ -57,109 +159,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
     }
   }
+}
+
+class OnboardingPageTemplate extends StatelessWidget {
+  final String title;
+  final String description;
+  final String imagePath;
+
+  const OnboardingPageTemplate({
+    Key? key,
+    required this.title,
+    required this.description,
+    required this.imagePath,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.only(bottom: 80),
-        child: PageView.builder(
-          controller: _controller,
-          onPageChanged: (index) {
-            setState(() {
-              isLastPage = index == pages.length - 1;
-            });
-          },
-          itemCount: pages.length,
-          itemBuilder: (context, index) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  pages[index].image,
-                  size: 150,
-                  color: theme.appBarTheme.foregroundColor,
-                ),
-                const SizedBox(height: 64),
-                Text(
-                  pages[index].title,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: theme.appBarTheme.foregroundColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: Text(
-                    pages[index].description,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: theme.textTheme.bodyMedium?.color,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            );
-          },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(imagePath, height: 200),
+        SizedBox(height: 32),
+        Text(
+          title,
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
-      ),
-      bottomSheet: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: 80,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: () => _controller.jumpToPage(pages.length - 1),
-              child: Text(
-                'skip',
-                style: TextStyle(
-                  color: theme.appBarTheme.foregroundColor,
-                ),
-              ),
-            ),
-            Center(
-              child: SmoothPageIndicator(
-                controller: _controller,
-                count: pages.length,
-                effect: WormEffect(
-                  spacing: 16,
-                  dotColor: theme.cardColor,
-                  activeDotColor: theme.appBarTheme.foregroundColor!,
-                ),
-                onDotClicked: (index) => _controller.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                if (isLastPage) {
-                  _completeOnboarding();
-                } else {
-                  _controller.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              },
-              child: Text(
-                isLastPage ? 'START' : 'NEXT',
-                style: TextStyle(color: theme.appBarTheme.foregroundColor),
-              ),
-            ),
-          ],
+        SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Text(
+            description,
+            style: TextStyle(fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -167,7 +202,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingPage {
   final String title;
   final String description;
-  final IconData image;
+  final String image;
 
   OnboardingPage({
     required this.title,
