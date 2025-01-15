@@ -5,6 +5,8 @@ import 'utilities/data.dart';
 import 'home.dart';
 import 'models/month_record.dart';
 import 'screens/new_month_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:giki_expense/screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,23 +27,33 @@ void main() async {
   final placesManager = PlacesManager();
   await placesManager.initPlaces();
 
+  // Check if it's first launch
+  final prefs = await SharedPreferences.getInstance();
+  final showHome = prefs.getBool('showHome') ?? false;
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => themeManager,
-      child: ExpenseApp(),
+      child: ExpenseApp(showHome: showHome),
     ),
   );
 }
 
 class ExpenseApp extends StatelessWidget {
-  const ExpenseApp({super.key});
+  final bool showHome;
+
+  const ExpenseApp({super.key, required this.showHome});
 
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
     return MaterialApp(
       theme: themeManager.currentTheme,
-      home: Hive.box<MonthRecord>('months').isEmpty ? NewMonthScreen() : Home(),
+      home: showHome
+          ? (Hive.box<MonthRecord>('months').isEmpty
+              ? NewMonthScreen()
+              : Home())
+          : const OnboardingScreen(),
     );
   }
 }
