@@ -52,12 +52,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingPage(
       title: 'Saving a Month',
       description: 'Save your monthly expenses and start a new month.',
-      image: 'assets/save_month.png',
+      image: 'assets/save_month.gif',
     ),
     OnboardingPage(
       title: 'Starting a New Month',
-      description: 'Set up a new month with a budget and selected places.',
-      image: 'assets/new_month.png',
+      description:
+          'Set up a new month with a budget and selected places. Choose frequently visited points of expenditure from major institutes or create new templates for frequent expenditures to use throughout the month.',
+      image: 'assets/new_month.gif',
     ),
     OnboardingPage(
       title: 'Viewing Charts',
@@ -178,8 +179,15 @@ class OnboardingPageTemplate extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(imagePath, height: 200),
-        SizedBox(height: 32),
+        SizedBox(
+          height: 500,
+          width: 300,
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        // SizedBox(height: 32),
         Text(
           title,
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

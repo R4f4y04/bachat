@@ -47,6 +47,7 @@ class ExpenseApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: themeManager.currentTheme,
       home: showHome
           ? (Hive.box<MonthRecord>('months').isEmpty
