@@ -25,29 +25,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Changing Theme',
       description:
           'Easily switch between light and dark themes to suit your preference.',
-      image: 'assets/change_theme.png',
+      image: 'assets/change_theme.gif',
     ),
     OnboardingPage(
       title: 'Adding a New Day',
       description: 'Add a new day to start tracking your expenses.',
-      image: 'assets/add_new_day.png',
+      image: 'assets/add_new_day.gif',
     ),
     OnboardingPage(
       title: 'Editing a Day',
       description:
           'Edit the details of a day, including adding and removing expenses.',
-      image: 'assets/edit_day.png',
+      image: 'assets/edit_day.gif',
     ),
     OnboardingPage(
       title: 'Adding Expenses',
       description:
           'Add detailed expenses for each day, including place, amount, and items.',
-      image: 'assets/add_expense.png',
+      image: 'assets/add_expense.gif',
     ),
     OnboardingPage(
       title: 'Deleting a Day',
       description: 'Remove a day and its expenses from your records.',
-      image: 'assets/delete_day.png',
+      image: 'assets/delete_day.gif',
     ),
     OnboardingPage(
       title: 'Saving a Month',
@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingPage(
       title: 'Viewing Charts',
       description: 'Analyze your spending patterns with detailed charts.',
-      image: 'assets/view_charts.png',
+      image: 'assets/view_charts.gif',
     ),
   ];
 
