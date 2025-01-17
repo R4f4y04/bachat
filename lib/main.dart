@@ -29,7 +29,7 @@ void main() async {
 
   // Check if it's first launch
   final prefs = await SharedPreferences.getInstance();
-  final showHome = false; //prefs.getBool('showHome') ?? false;
+  final showHome = prefs.getBool('showHome') ?? false;
   runApp(
     ChangeNotifierProvider(
       create: (_) => themeManager,
