@@ -19,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Welcome to Bachat: Budget',
       description:
           'Your personal expense tracker designed for hassle-free budget management.',
-      image: 'assets/welcome.gif',
+      image: 'assets/welcome2.gif',
     ),
     OnboardingPage(
       title: 'Changing Theme',
