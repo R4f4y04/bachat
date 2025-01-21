@@ -3,14 +3,60 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 final Map<String, List<String>> institutePlaces = {
-  'GIKI': ['Raju', 'Ayan', 'Hot N Spicy', 'Karachi Biryani', 'Mess', 'Tahir'],
+  'GIKI': [
+    'Raju',
+    'Ayan',
+    'Hot N Spicy',
+    'Karachi Biryani',
+    'Mess',
+    'Tahir',
+    'General Store',
+    'GIKAFE',
+    'AsrarBucks',
+    'Shakes Stores',
+    'Fruit Shop',
+    'Barber',
+    'Stationery'
+  ],
   'NUST': [
     'NUST Cafe',
     'Student Center',
     'Business District',
     'C3A Cafe',
-    'NUST Cafe 2'
+    'Concordia 1',
+    'Concordia 2',
+    'Concordia 3/South Edge Cafe',
+    'C1 Mart',
+    'C2 Mart',
+    'Coffee Lounge',
+    'Retro Cafe',
+    'SEECS Khaapa',
+    'NICE Cafe',
+    'NSTP/Inno Cafe',
+    'Ez Bike',
+    'NUST Medical Center',
+    'S³H Cafe',
+    'SMME Cafe'
   ],
+
+  'LUMS': [
+    'Pepsi Dining Center (PDC)',
+    'Baradari',
+    'Zakir',
+    'Subway',
+    'Chinese Corner',
+    'Juice Shop',
+    'Delish',
+    'Jam and Java',
+    'Baithak',
+    'LUMS Mart',
+    'Khokha'
+  ],
+  'BNU': [],
+  'Fast': [],
+  'COMSATS': [],
+  'Bahria': [],
+
   // Add more institutes as needed
 };
 
