@@ -199,24 +199,59 @@ class _HomeState extends State<Home> {
             onPressed: () => themeManager.toggleTheme(),
           ),
         ],
-        leading: PopupMenuButton(
-          color: Theme.of(context).appBarTheme.backgroundColor,
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'save',
-              child: Text("Save Month"),
-            ),
-            PopupMenuItem(
-              value: 'history',
-              child: Text("Expenditure History"),
-            ),
-          ],
-          onSelected: (value) {
-            if (value == 'save') {
-              _saveMonth();
-            } else if (value == 'history') {
-              _navigateToHistory();
-            }
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (BuildContext context) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 12),
+                        height: 4,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.save,
+                            color:
+                                Theme.of(context).appBarTheme.foregroundColor),
+                        title: Text('Save Month',
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _saveMonth();
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.history,
+                            color:
+                                Theme.of(context).appBarTheme.foregroundColor),
+                        title: Text('Expenditure History',
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _navigateToHistory();
+                        },
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  ),
+                );
+              },
+            );
           },
         ),
         title: Column(
@@ -417,50 +452,46 @@ class _DayCardState extends State<DayCard> {
                       ),
                     ),
                     SizedBox(height: 8),
-                    ...widget.dayRecord.expenses
-                        .map((expense) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    ...widget.dayRecord.expenses.map((expense) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        expense.name,
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                      Text(
-                                        formatTime(expense.time),
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600]),
-                                      ),
-                                      Text(
-                                        'Rs. ${expense.amount.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[700]),
-                                      ),
-                                    ],
+                                  Text(
+                                    expense.name,
+                                    style: TextStyle(fontSize: 14),
                                   ),
-                                  if (expense.items != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4.0),
-                                      child: Text(
-                                        expense.items!,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[500],
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
+                                  Text(
+                                    formatTime(expense.time),
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey[600]),
+                                  ),
+                                  Text(
+                                    'Rs. ${expense.amount.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey[700]),
+                                  ),
                                 ],
                               ),
-                            ))
-                        ,
+                              if (expense.items != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    expense.items!,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[500],
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        )),
                   ],
                   Align(
                     alignment: Alignment.centerRight,
