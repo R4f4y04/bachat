@@ -21,11 +21,13 @@ class HistoryScreen extends StatelessWidget {
             );
           }
 
+          final months = box.values.toList().reversed.toList();
+
           return ListView.builder(
             padding: EdgeInsets.all(16),
-            itemCount: box.length,
+            itemCount: months.length,
             itemBuilder: (context, index) {
-              final month = box.getAt(index);
+              final month = months[index];
               if (month == null) return SizedBox.shrink();
 
               final daysCount = month.days.length;
