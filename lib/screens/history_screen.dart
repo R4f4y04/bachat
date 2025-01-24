@@ -28,7 +28,6 @@ class HistoryScreen extends StatelessWidget {
             itemCount: months.length,
             itemBuilder: (context, index) {
               final month = months[index];
-              if (month == null) return SizedBox.shrink();
 
               final daysCount = month.days.length;
               final completionStatus =

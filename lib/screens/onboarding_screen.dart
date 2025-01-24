@@ -168,11 +168,11 @@ class OnboardingPageTemplate extends StatelessWidget {
   final String imagePath;
 
   const OnboardingPageTemplate({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

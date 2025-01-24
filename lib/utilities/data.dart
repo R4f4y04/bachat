@@ -19,9 +19,6 @@ final Map<String, List<String>> institutePlaces = {
     'Stationery'
   ],
   'NUST': [
-    'NUST Cafe',
-    'Student Center',
-    'Business District',
     'C3A Cafe',
     'Concordia 1',
     'Concordia 2',
